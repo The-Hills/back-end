@@ -5,7 +5,7 @@ const userRouter = express.Router();
 
 userRouter.delete("/:id", userController.destroy);
 userRouter.get("/:id", userController.show);
+userRouter.put("/:id", userController.update);
 userRouter.get("/", userController.index);
-userRouter.post("/", userController.store);
 
 export default userRouter;

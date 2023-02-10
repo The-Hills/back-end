@@ -1,22 +1,27 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import {gender} from "../utils/Enum";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Gender } from "../utils/Enum";
+import { Account } from "./Account.entity";
+import { Booking } from "./Booking.entity";
+import { VehicleInfo } from "./VehicleInfo.entity";
 
 @Entity()
 export class Driver {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Column()
-  accountId: number;
+  name: string;
 
   @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
-  gender: gender;
+  gender: Gender;
 
   @Column()
   avatar: string;
@@ -25,11 +30,15 @@ export class Driver {
   rating: number;
 
   @Column()
-  vehicleId: number;
-
-  @Column()
   cardId: number;
 
   @Column()
   driverLicense: string;
+
+  @OneToOne(() => VehicleInfo)
+  @JoinColumn()
+  vehicle: VehicleInfo;
+
+  @OneToMany(() => Booking, (booking) => booking.dirver)
+  booking: Booking[];
 }

@@ -1,12 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { AccountType } from "../utils/Enum";
+import { User } from "./User.entity";
+import { Driver } from "./Driver.entity";
+import { Administrator } from "./Administrator.entity";
 
 @Entity()
 export class Account {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @Column()
-  idAccountType: number;
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    default: AccountType.user,
+  })
+  type: AccountType;
 
   @Column()
   email: string;
@@ -16,4 +30,19 @@ export class Account {
 
   @Column()
   password: string;
+
+  @Column()
+  access_tonken: string;
+
+  @OneToOne(() => User, { onDelete: "CASCADE" })
+  @JoinColumn()
+  user: User;
+
+  @OneToOne(() => Driver, { onDelete: "CASCADE" })
+  @JoinColumn()
+  driver: Driver;
+
+  @OneToOne(() => Administrator, { onDelete: "CASCADE" })
+  @JoinColumn()
+  admin: Administrator;
 }

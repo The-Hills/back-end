@@ -2,31 +2,43 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  OneToOne,
+  OneToMany,
+  ManyToOne,
 } from "typeorm";
-import { gender } from "../utils/Enum";
+import { Gender } from "../utils/Enum";
 import { User } from "./User.entity";
+import { Booking } from "./Booking.entity";
 
 @Entity()
 export class Kid {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @Column()
-  firstName: string;
+  @Column({
+    type: "varchar",
+  })
+  name: string;
 
-  @Column()
-  lastName: string;
-
-  @Column()
+  @Column({
+    type: "integer",
+  })
   age: number;
 
-  @Column()
-  gender: gender;
+  @Column({ type: "enum", enum: Gender, default: Gender.male })
+  gender: Gender;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    default: "Avatar.png",
+  })
   avatar: string;
 
-  @OneToOne(() => User, (user) => user.kid)
+  @ManyToOne(() => User, (user) => user.kid, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
   parent: User;
+
+  @OneToMany(() => Booking, (booking) => booking.kid)
+  booking: Booking[];
 }

@@ -1,31 +1,45 @@
 import { AppDataSource } from "../data-source";
+import { AccountType } from "../utils/Enum";
 import { Account } from "./../entities/Account.entity";
+import { User } from "./../entities/User.entity";
 
 const accRepo = AppDataSource.getRepository(Account);
 
 const accountRepository = {
   getAllAccount: async () => {
-    const accounts = await accRepo.find();
-    return accounts;
+    return await accRepo.find({
+      relations: {
+        user: true,
+      },
+    });
   },
 
-  getEmailAccount: async (email: string) => {
-    return await accRepo.findOneBy({ email });
+  getAccountByEmail: async (email: string) => {
+    return await accRepo.findOne({
+      relations: {
+        user: true,
+        driver: true,
+      },
+      where: {
+        email,
+      },
+    });
   },
 
-  getPassword: async (password: string) => {
-    return await accRepo.findOneBy({ password });
+  createAccount: async (
+    email: string,
+    password: string,
+    phone: string,
+    role: AccountType,
+    user: User
+  ) => {
+    return await accRepo.save(
+      await accRepo.create({ email, password, phone, type: role, user })
+    );
   },
 
-  createUser: async (data) => {
-    const newUser = await accRepo.create(data);
-    return await accRepo.save(newUser);
-  },
-
-  updateUser: async () => {},
-
-  deleteUser: async (id: number) => {
-    return await accRepo.delete({ id });
+  updateToken: async (acc: Account) => {
+    await accRepo.save(acc);
   },
 };
 

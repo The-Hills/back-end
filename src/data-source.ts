@@ -10,16 +10,17 @@ import { VehicleType } from "./entities/VehicleType.entity";
 import { Payment } from "./entities/Payment.entity";
 import { Administrator } from "./entities/Administrator.entity";
 import { Account } from "./entities/Account.entity";
-import { AccountType } from "./entities/AccountType.entity";
 import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "the-hill-db.cziwnz9dwd78.ap-northeast-1.rds.amazonaws.com",
-  port: 3306,
-  username: "admin",
-  password: "Thehills2023",
-  database: "the_hills",
+  host: process.env.HOST,
+  port: Number(process.env.PORT),
+  username: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
   synchronize: true,
   logging: false,
   entities: [
@@ -33,7 +34,6 @@ export const AppDataSource = new DataSource({
     Payment,
     Administrator,
     Account,
-    AccountType,
   ],
   migrations: [],
   subscribers: [],

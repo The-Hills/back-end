@@ -1,25 +1,56 @@
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User.entity";
+import { Gender } from "../utils/Enum";
 
 const userRepo = AppDataSource.getRepository(User);
 
 const userRepository = {
   getAllUser: async () => {
-    return await userRepo.find();
+    return await userRepo.find({
+      relations: {
+        kid: true,
+      },
+    });
   },
 
-  getUserById: async (id: number) => {
-    return await userRepo.findOneBy({ id });
+  getUserById: async (id: string) => {
+    const user = await userRepo.findOne({
+      relations: {
+        kid: true,
+      },
+      where: {
+        id,
+      },
+    });
+    if (user === null) {
+      return null;
+    }
+    console.log("get ID");
+    return user;
   },
 
-  createUser: async (data) => {
-    const newUser = await userRepo.create(data);
+  createUser: async (name: string, gender: Gender) => {
+    const newUser = await userRepo.create({ name, gender });
     return await userRepo.save(newUser);
   },
 
-  updateUser: async () => {},
+  updateUser: async (id: string, data: User) => {
+    const { name, avatar, gender } = data;
+    const user = await userRepo.findOneBy({ id });
+    if (user === null) {
+      return null;
+    }
+    user.gender = gender || user.gender;
+    user.name = name || user.name;
+    user.avatar = avatar || user.avatar;
+    return userRepo.save(user);
+  },
 
-  deleteUser: async (id: number) => {
+  deleteUser: async (id: string) => {
+    const user = await userRepo.findOneBy({ id });
+    if (user === null) {
+      return null;
+    }
     return await userRepo.delete({ id });
   },
 };

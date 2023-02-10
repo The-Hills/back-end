@@ -1,13 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { VehicleType } from "./VehicleType.entity";
 
 @Entity()
 export class VehiclePrice {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  vehicleTypeId: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   fee: number;
+
+  @OneToOne(() => VehicleType)
+  @JoinColumn()
+  vehicleType: VehicleType;
 }

@@ -2,42 +2,54 @@ import { Request, Response, NextFunction } from "express";
 import userRepository from "./../repositories/User.repository";
 
 const userController = {
-  index: (req: Request, res: Response, next: NextFunction) => {
-    userRepository
-      .getAllUser()
-      .then((users) => {
-        res.json(users);
-      })
-      .catch(next);
+  index: async (req: Request, res: Response) => {
+    const listUser = await userRepository.getAllUser();
+    if (listUser.length !== 0) {
+      res.status(200).json({ message: "Successfully", data: listUser });
+    } else {
+      res
+        .status(200)
+        .json({ message: "There are no users in the list", data: listUser });
+    }
   },
-
-  show: (req: Request, res: Response, next: NextFunction) => {
+  show: async (req: Request, res: Response) => {
     const userId = req.params.id;
-    userRepository
-      .getUserById(userId)
-      .then((user) => {
-        res.json(user);
-      })
-      .catch(next);
+    const user = await userRepository.getUserById(userId);
+    if (user) {
+      res.status(200).json({ message: "Successfully", data: user });
+    } else {
+      res.status(400).json({ message: "ID is not defined" });
+    }
   },
 
-  store: (req: Request, res: Response, next: NextFunction) => {
-    const data = req.body;
-
-    userRepository
-      .createUser(data)
-      .then(() => {
-        res.send(data);
-      })
-      .catch(next);
-  },
-
-  destroy: (req: Request, res: Response, next: NextFunction) => {
+  update: async (req: Request, res: Response) => {
     const userId = req.params.id;
-    userRepository
-      .deleteUser(userId)
-      .then(() => res.send("successfully"))
-      .catch(next);
+    const userData = req.body;
+    const user = await userRepository.updateUser(userId, userData);
+    if (user) {
+      res.status(200).json({
+        message: "Successfully",
+        data: user,
+      });
+    } else {
+      res.status(400).json({
+        message: "Id is not defined",
+      });
+    }
+  },
+
+  destroy: async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const user = await userRepository.deleteUser(userId);
+    if (user) {
+      res.status(200).json({
+        message: "Successfully",
+      });
+    } else {
+      res.status(400).json({
+        message: "Id is not defined",
+      });
+    }
   },
 };
 

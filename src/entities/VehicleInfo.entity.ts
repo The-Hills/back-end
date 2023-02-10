@@ -1,9 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { VehicleType } from "./VehicleType.entity";
 
 @Entity()
 export class VehicleInfo {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   vehicleTypeId: number;
@@ -16,4 +23,8 @@ export class VehicleInfo {
 
   @Column()
   licensePlates: string;
+
+  @OneToOne(() => VehicleType)
+  @JoinColumn()
+  vehicleType: VehicleType;
 }
