@@ -3,6 +3,7 @@ import { RegisterUserPayload } from "../utils/interfaces";
 import * as bcrypt from "bcrypt";
 import userRepository from "./../repositories/User.repository";
 import * as jwt from "jsonwebtoken";
+import generateAccessToken from "./../middlewares/token";
 
 const authService = {
   login: async (email: string, password: string) => {
@@ -10,7 +11,7 @@ const authService = {
     if (account?.email) {
       const passwordCompare = await bcrypt.compare(password, account?.password);
       if (passwordCompare) {
-        const token = jwt.sign({ account }, "shhhhh");
+        const token = generateAccessToken(account.id);
         account.access_tonken = token;
         accountRepository.updateToken(account);
         return token;
