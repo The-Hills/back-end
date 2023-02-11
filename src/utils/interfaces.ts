@@ -10,4 +10,7 @@ export interface RegisterUserPayload {
   role: AccountType;
 }
 
-
+export interface loginUserPayload {
+  email: string;
+  password: string;
+}
