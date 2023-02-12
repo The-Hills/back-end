@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import authService from "./../services/auth.service";
 import accountRepository from "./../repositories/Account.repository";
-import { RegisterUserPayload } from "../utils/interfaces";
+import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
+import { validationResult } from "express-validator";
 
 const authController = {
   allAccount: async (req: Request, res: Response) => {
@@ -14,8 +15,14 @@ const authController = {
   },
 
   login: async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    const token = await authService.login(email, password);
+    console.log("login");
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const data: loginUserPayload = req.body;
+    const token = await authService.login(data);
     if (token === null) {
       res
         .status(401)
@@ -33,8 +40,15 @@ const authController = {
   },
 
   register: async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const data: RegisterUserPayload = req.body;
     const acc = await authService.register(data);
+    if (!acc) {
+      return res.status(500).json({ message: "Email is exits" });
+    }
     res.status(200).json({ message: "Successfully", data: acc });
   },
 };

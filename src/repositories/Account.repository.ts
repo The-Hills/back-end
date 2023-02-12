@@ -41,6 +41,10 @@ const accountRepository = {
   updateToken: async (acc: Account) => {
     await accRepo.save(acc);
   },
+
+  exitsEmail: async (email: string) => {
+    return await accRepo.exist({ where: { email } });
+  },
 };
 
 export default accountRepository;
