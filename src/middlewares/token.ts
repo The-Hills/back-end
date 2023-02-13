@@ -1,12 +1,11 @@
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { Account } from "./../entities/Account.entity";
 
 dotenv.config();
 
-const generateAccessToken = (accountId: string) => {
-  const token = jwt.sign({ accountId }, process.env.TOKEN_SECRET, {
-    expiresIn: "1800s",
-  });
+const generateAccessToken = (account: Account) => {
+  const token = jwt.sign({ account }, process.env.TOKEN_SECRET);
   return token;
 };
 

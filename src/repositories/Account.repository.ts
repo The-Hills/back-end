@@ -33,17 +33,12 @@ const accountRepository = {
   createAccount: async (
     email: string,
     password: string,
-    phone: string,
     role: AccountType,
     user: User
   ) => {
     return await accRepo.save(
-      await accRepo.create({ email, password, phone, type: role, user })
+      await accRepo.create({ email, password, type: role, user })
     );
-  },
-
-  updateToken: async (acc: Account) => {
-    await accRepo.save(acc);
   },
 };
 

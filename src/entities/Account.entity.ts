@@ -26,14 +26,8 @@ export class Account {
   email: string;
 
   @Column()
-  phone: string;
-
-  @Column()
   password: string;
-
-  @Column()
-  access_tonken: string;
-
+  
   @OneToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn()
   user: User;

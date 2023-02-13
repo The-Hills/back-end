@@ -29,8 +29,8 @@ const userRepository = {
     return user;
   },
 
-  createUser: async (name: string, gender: Gender) => {
-    const newUser = await userRepo.create({ name, gender });
+  createUser: async (name: string, phone: string, gender: Gender) => {
+    const newUser = await userRepo.create({ name, phone, gender });
     return await userRepo.save(newUser);
   },
 

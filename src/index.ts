@@ -2,6 +2,8 @@ import "reflect-metadata";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
+// import * as cookieParser from "cookie-parser";
+// import * as sessions from "express-session";
 import route from "./routes";
 
 import { AppDataSource } from "./data-source";
@@ -18,6 +20,16 @@ app.use(
   })
 );
 
+// app.use(
+//   sessions({
+//     secret: "",
+//     saveUninitialized: true,
+//     cookie: {},
+//     resave: false,
+//   })
+// );
+
+// app.use(cookieParser());
 
 const port = 3000;
 
