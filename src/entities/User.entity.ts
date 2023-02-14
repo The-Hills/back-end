@@ -9,6 +9,7 @@ import {
 import { Gender } from "../utils/Enum";
 import { Kid } from "./Kid.entity";
 import { Booking } from "./Booking.entity";
+import { Account } from "./Account.entity";
 
 @Entity()
 export class User {
@@ -18,6 +19,9 @@ export class User {
   @Column()
   name: string;
 
+  @Column()
+  phone: string;
+
   @Column({ type: "enum", enum: Gender, default: Gender.male })
   gender: Gender;
 
@@ -25,6 +29,10 @@ export class User {
     default: "avatar.png",
   })
   avatar: string;
+
+  @OneToOne(() => Account, { onDelete: "CASCADE" })
+  @JoinColumn()
+  account: Account;
 
   @OneToMany(() => Kid, (kid) => kid.parent, {
     cascade: true,

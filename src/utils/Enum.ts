@@ -10,4 +10,14 @@ export enum AccountType {
   admin = "admin",
 }
 
-export enum status {}
+export enum BookingStatus {
+  onTracking = "onTracking",
+  onRide = "onRide",
+  conpleted = "completed"
+}
+
+export enum DriverStatus {
+  active = "active",
+  unActive = "unActive",
+}
+
