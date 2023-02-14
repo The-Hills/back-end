@@ -2,6 +2,7 @@ import accountRepository from "./../repositories/Account.repository";
 import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
 import * as bcrypt from "bcrypt";
 import userRepository from "./../repositories/User.repository";
+import generateAccessToken from "./../middlewares/token";
 import * as jwt from "jsonwebtoken";
 import { IDriver } from "./../utils/interfaces";
 import driverRepositoty from "./../repositories/Driver.repository";
@@ -13,7 +14,7 @@ const authService = {
       const account = await accountRepository.getAccountByEmail(email);
       const passwordCompare = await bcrypt.compare(password, account?.password);
       if (passwordCompare) {
-        const token = jwt.sign({ account }, "shhhhh");
+        const token = generateAccessToken(account);
         return token;
       }
       return false;
@@ -69,6 +70,8 @@ const authService = {
     }
     return false;
   },
+
+  logout: () => {},
 };
 
 export default authService;

@@ -18,6 +18,10 @@ const accountRepository = {
     });
   },
 
+  getAccountById: async (id: string) => {
+    return await accRepo.findOneBy({ id });
+  },
+
   createAccount: async (
     email: string,
     password: string,

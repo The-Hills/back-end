@@ -2,9 +2,10 @@ import "reflect-metadata";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
-import route from "./routes";
-
 import { AppDataSource } from "./data-source";
+import errorMiddleware from "./middlewares/errorMiddleware";
+import setCurrentUser from "./middlewares";
+import rootRouter from "./routes/index";
 
 const app = express();
 
@@ -28,6 +29,7 @@ AppDataSource.initialize()
     console.log("error =>", error);
   });
 
-route(app);
+app.use("/api", rootRouter);
+app.use(errorMiddleware);
 
 app.listen(port);
