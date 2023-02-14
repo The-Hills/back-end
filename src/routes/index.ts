@@ -1,12 +1,18 @@
 import userRouter from "./user.route";
 import authRouter from "./auth.route";
 import kidRouter from "./kid.route";
-import setCurrentUser from "../middlewares";
+import { Router } from "express";
+import { isLoggedIn } from "../middlewares";
+import setCurrentUser from "./../middlewares/index";
 
-const route = (app) => {
-  app.use("/auth", authRouter);
-  app.use("/kid", kidRouter);
-  app.use("/", setCurrentUser, userRouter);
-};
+const middlewareRouter = Router();
 
-export default route;
+middlewareRouter.use("/kid", kidRouter);
+middlewareRouter.use("/", userRouter);
+
+const rootRouter = Router();
+
+rootRouter.use("/auth", authRouter);
+rootRouter.use("/", setCurrentUser, isLoggedIn, middlewareRouter);
+
+export default rootRouter;

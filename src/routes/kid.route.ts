@@ -1,7 +1,7 @@
-import * as express from "express";
+import { Router } from "express";
 import kidController from "./../controllers/Kid.controller";
 
-const kidRouter = express.Router();
+const kidRouter = Router();
 
 kidRouter.get("/:id", kidController.show);
 kidRouter.post("/", kidController.store);
