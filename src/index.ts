@@ -18,7 +18,6 @@ app.use(
   })
 );
 
-
 const port = 3000;
 
 AppDataSource.initialize()

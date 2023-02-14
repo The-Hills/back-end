@@ -12,4 +12,6 @@ authRouter.post(
   authController.register
 );
 
+authRouter.post("/register/driver", authController.driverRigester);
+
 export default authRouter;

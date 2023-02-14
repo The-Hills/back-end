@@ -18,4 +18,8 @@ export class Administrator {
 
   @Column()
   lastName: string;
+
+  @OneToOne(() => Account)
+  @JoinColumn()
+  account: Account;
 }

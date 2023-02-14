@@ -3,6 +3,8 @@ import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
 import * as bcrypt from "bcrypt";
 import userRepository from "./../repositories/User.repository";
 import * as jwt from "jsonwebtoken";
+import { IDriver } from "./../utils/interfaces";
+import driverRepositoty from "./../repositories/Driver.repository";
 
 const authService = {
   login: async (paylod: loginUserPayload) => {
@@ -12,8 +14,6 @@ const authService = {
       const passwordCompare = await bcrypt.compare(password, account?.password);
       if (passwordCompare) {
         const token = jwt.sign({ account }, "shhhhh");
-        account.access_tonken = token;
-        await accountRepository.updateToken(account);
         return token;
       }
       return false;
@@ -26,13 +26,45 @@ const authService = {
     const emailIsExits = await accountRepository.exitsEmail(email);
     if (!emailIsExits) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await userRepository.createUser(name, gender);
-      return await accountRepository.createAccount(
+      const acc = await accountRepository.createAccount(
         email,
         hashedPassword,
+        role
+      );
+      return await userRepository.createUser(name, phone, gender, acc);
+    }
+    return false;
+  },
+
+  driverRegister: async (payload: IDriver) => {
+    const {
+      email,
+      password,
+      role,
+      name,
+      phone,
+      gender,
+      avatar,
+      cardId,
+      driverLicense,
+    } = payload;
+
+    const emailIsExits = await accountRepository.exitsEmail(email);
+    if (!emailIsExits) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const acc = await accountRepository.createAccount(
+        email,
+        hashedPassword,
+        role
+      );
+      return await driverRepositoty.createDriver(
+        name,
         phone,
-        role,
-        user
+        gender,
+        avatar,
+        cardId,
+        driverLicense,
+        acc
       );
     }
     return false;

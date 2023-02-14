@@ -3,6 +3,8 @@ import authService from "./../services/auth.service";
 import accountRepository from "./../repositories/Account.repository";
 import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
 import { validationResult } from "express-validator";
+import { IDriver } from "./../utils/interfaces";
+import { AccountType } from "../utils/Enum";
 
 const authController = {
   allAccount: async (req: Request, res: Response) => {
@@ -46,6 +48,20 @@ const authController = {
     }
     const data: RegisterUserPayload = req.body;
     const acc = await authService.register(data);
+    if (!acc) {
+      return res.status(500).json({ message: "Email is exits" });
+    }
+    res.status(200).json({ message: "Successfully", data: acc });
+  },
+
+  driverRigester: async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const data: IDriver = req.body;
+    data.role = AccountType.driver;
+    const acc = await authService.driverRegister(data);
     if (!acc) {
       return res.status(500).json({ message: "Email is exits" });
     }

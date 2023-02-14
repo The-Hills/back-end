@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { status } from "../utils/Enum";
+import { BookingStatus } from "../utils/Enum";
 import { Driver } from "./Driver.entity";
 import { Payment } from "./Payment.entity";
 import { User } from "./User.entity";
@@ -23,8 +23,12 @@ export class Booking {
   @Column()
   fee: number;
 
-  @Column()
-  status: status;
+  @Column({
+    type: "enum",
+    enum: BookingStatus,
+    default: BookingStatus.onTracking,
+  })
+  status: BookingStatus;
 
   @Column("datetime")
   startTime: string;

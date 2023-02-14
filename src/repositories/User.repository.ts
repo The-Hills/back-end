@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/User.entity";
 import { Gender } from "../utils/Enum";
+import { Account } from "./../entities/Account.entity";
 
 const userRepo = AppDataSource.getRepository(User);
 
@@ -9,6 +10,7 @@ const userRepository = {
     return await userRepo.find({
       relations: {
         kid: true,
+        account: true,
       },
     });
   },
@@ -29,8 +31,18 @@ const userRepository = {
     return user;
   },
 
-  createUser: async (name: string, gender: Gender) => {
-    const newUser = await userRepo.create({ name, gender });
+  createUser: async (
+    name: string,
+    phone: string,
+    gender: Gender,
+    acc: Account
+  ) => {
+    const newUser = await userRepo.create({
+      name,
+      gender,
+      phone,
+      account: acc,
+    });
     return await userRepo.save(newUser);
   },
 
