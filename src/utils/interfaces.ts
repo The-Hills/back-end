@@ -1,4 +1,6 @@
-import { AccountType, Gender } from "./Enum";
+import { AccountType, DriverStatus, Gender } from "./Enum";
+import { VehicleInfo } from "./../entities/VehicleInfo.entity";
+import { Booking } from "./../entities/Booking.entity";
 
 export interface RegisterUserPayload {
   email: string;
@@ -10,4 +12,23 @@ export interface RegisterUserPayload {
   role: AccountType;
 }
 
+export interface loginUserPayload {
+  email: string;
+  password: string;
+}
 
+export interface IDriver {
+  email: string;
+  password: string;
+  name: string;
+  role: AccountType;
+  phone: string;
+  gender: Gender;
+  status: DriverStatus;
+  avatar: string;
+  rating: number;
+  cardId: number;
+  driverLicense: string;
+  vehicle: VehicleInfo;
+  booking: Booking;
+}

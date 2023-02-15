@@ -7,39 +7,33 @@ const accRepo = AppDataSource.getRepository(Account);
 
 const accountRepository = {
   getAllAccount: async () => {
-    return await accRepo.find({
-      relations: {
-        user: true,
-      },
-    });
+    return await accRepo.find();
   },
 
   getAccountByEmail: async (email: string) => {
     return await accRepo.findOne({
-      relations: {
-        user: true,
-        driver: true,
-      },
       where: {
         email,
       },
     });
   },
 
+  getAccountById: async (id: string) => {
+    return await accRepo.findOneBy({ id });
+  },
+
   createAccount: async (
     email: string,
     password: string,
-    phone: string,
-    role: AccountType,
-    user: User
+    role: AccountType
   ) => {
     return await accRepo.save(
-      await accRepo.create({ email, password, phone, type: role, user })
+      await accRepo.create({ email, password, type: role })
     );
   },
 
-  updateToken: async (acc: Account) => {
-    await accRepo.save(acc);
+  exitsEmail: async (email: string) => {
+    return await accRepo.exist({ where: { email } });
   },
 };
 

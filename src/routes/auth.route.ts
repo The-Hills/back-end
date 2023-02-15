@@ -1,10 +1,17 @@
-import * as express from "express";
+import {Router} from "express";
 import authController from "../controllers/Auth.controller";
+import authValidator from "./../validator/authValidator";
 
-const authRouter = express.Router();
+const authRouter = Router();
 
 authRouter.get("/", authController.allAccount);
-authRouter.post("/login", authController.login);
-authRouter.post("/register", authController.register);
+authRouter.post("/login", authValidator.validatorLogin(), authController.login);
+authRouter.post(
+  "/register",
+  authValidator.validateRegisterUser(),
+  authController.register
+);
+
+authRouter.post("/register/driver", authController.driverRigester);
 
 export default authRouter;

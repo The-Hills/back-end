@@ -2,12 +2,11 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Gender } from "../utils/Enum";
+import { DriverStatus, Gender } from "../utils/Enum";
 import { Account } from "./Account.entity";
 import { Booking } from "./Booking.entity";
 import { VehicleInfo } from "./VehicleInfo.entity";
@@ -24,6 +23,18 @@ export class Driver {
   gender: Gender;
 
   @Column()
+  phone: string;
+
+  @Column({
+    type: "enum",
+    enum: DriverStatus,
+    default: DriverStatus.unActive,
+  })
+  status: DriverStatus;
+
+  @Column({
+    default: "avatar.png",
+  })
   avatar: string;
 
   @Column()
@@ -34,6 +45,10 @@ export class Driver {
 
   @Column()
   driverLicense: string;
+
+  @OneToOne(() => Account, { onDelete: "CASCADE" })
+  @JoinColumn()
+  account: Account;
 
   @OneToOne(() => VehicleInfo)
   @JoinColumn()
