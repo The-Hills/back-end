@@ -6,7 +6,7 @@ dotenv.config();
 
 export const getUserFromToken = async (token) => {
   const decode = await jwt.verify(token, process.env.TOKEN_SECRET);
-  return decode.account;
+  return decode;
 };
 
 const setCurrentUser = async (
@@ -19,13 +19,15 @@ const setCurrentUser = async (
   if (!token || token === undefined) {
     return next({ status: 401, message: "missing auth token" });
   }
-  const account = await getUserFromToken(token);
-  req.account = account;
+  const result = await getUserFromToken(token);
+  const { role, id } = result;
+  const user = { role, id };
+  req.user = user;
   return next();
 };
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
-  if (req.account) {
+  if (req.user) {
     return next();
   }
   return next({ code: 401, message: "Unauthorized" });

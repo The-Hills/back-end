@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import authService from "./../services/auth.service";
 import accountRepository from "./../repositories/Account.repository";
-import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
+import { loginPayload, RegisterUserPayload } from "../utils/interfaces";
 import { validationResult } from "express-validator";
 import { IDriver } from "./../utils/interfaces";
 import { AccountType } from "../utils/Enum";
@@ -19,24 +19,26 @@ const authController = {
   login: async (req: Request, res: Response) => {
     console.log("login");
     const errors = validationResult(req);
-    console.log(errors);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const data: loginUserPayload = req.body;
-    const token = await authService.login(data);
-    if (token === null) {
+    const data: loginPayload = req.body;
+    const result = await authService.login(data);
+    if (result === null) {
       res
         .status(401)
         .json({ message: "Authentication failed. User not found." });
-    } else if (!token) {
+    } else if (!result) {
       res
         .status(401)
         .json({ message: "Authentication failed. Wrong password." });
     } else {
+      const { token, id, role } = result;
       res.status(200).json({
         message: "Successfully",
         token,
+        id,
+        role,
       });
     }
   },
@@ -67,6 +69,28 @@ const authController = {
     }
     res.status(200).json({ message: "Successfully", data: acc });
   },
+
+  driverLogin: async (req: Request, res: Response) => {
+    const data: loginPayload = req.body;
+    const result = await authService.driverLogin(data);
+    if (result === null) {
+      res
+        .status(401)
+        .json({ message: "Authentication failed. User not found." });
+    } else if (!result) {
+      res
+        .status(401)
+        .json({ message: "Authentication failed. Wrong password." });
+    } else {
+      const { token, id, role } = result;
+      res.status(200).json({
+        message: "Successfully",
+        token,
+        id,
+        role,
+      });
+    }
+  }
 };
 
 export default authController;

@@ -30,7 +30,7 @@ export class User {
   })
   avatar: string;
 
-  @OneToOne(() => Account, { onDelete: "CASCADE" })
+  @OneToOne(() => Account, (account) => account.user, { onDelete: "CASCADE" })
   @JoinColumn()
   account: Account;
 

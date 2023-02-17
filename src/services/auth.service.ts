@@ -1,5 +1,5 @@
 import accountRepository from "./../repositories/Account.repository";
-import { loginUserPayload, RegisterUserPayload } from "../utils/interfaces";
+import { loginPayload, RegisterUserPayload } from "../utils/interfaces";
 import * as bcrypt from "bcrypt";
 import userRepository from "./../repositories/User.repository";
 import generateAccessToken from "./../middlewares/token";
@@ -8,14 +8,16 @@ import { IDriver } from "./../utils/interfaces";
 import driverRepositoty from "./../repositories/Driver.repository";
 
 const authService = {
-  login: async (paylod: loginUserPayload) => {
+  login: async (paylod: loginPayload) => {
     const { email, password } = paylod;
     if (await accountRepository.exitsEmail(email)) {
       const account = await accountRepository.getAccountByEmail(email);
       const passwordCompare = await bcrypt.compare(password, account?.password);
       if (passwordCompare) {
-        const token = generateAccessToken(account);
-        return token;
+        const id = account.user.id;
+        const role = account.type;
+        const token = generateAccessToken(account.type, id);
+        return { token, id, role };
       }
       return false;
     }
@@ -69,6 +71,22 @@ const authService = {
       );
     }
     return false;
+  },
+
+  driverLogin: async (paylod: loginPayload) => {
+    const { email, password } = paylod;
+    if (await accountRepository.exitsEmail(email)) {
+      const account = await accountRepository.getAccountByEmail(email);
+      const passwordCompare = await bcrypt.compare(password, account?.password);
+      if (passwordCompare) {
+        const id = account.driver.id;
+        const role = account.type;
+        const token = generateAccessToken(account.type, id);
+        return { token, id, role };
+      }
+      return false;
+    }
+    return null;
   },
 
   logout: () => {},
