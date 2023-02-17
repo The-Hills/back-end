@@ -6,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { AccountType } from "../utils/Enum";
+import { User } from "./User.entity";
+import { Driver } from "./Driver.entity";
 
 @Entity()
 export class Account {
@@ -24,4 +26,10 @@ export class Account {
 
   @Column()
   password: string;
+
+  @OneToOne(() => User, (user) => user.account)
+  user?: User;
+
+  @OneToOne(() => Driver, (driver) => driver.account)
+  driver?: Driver;
 }

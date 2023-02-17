@@ -46,7 +46,7 @@ export class Driver {
   @Column()
   driverLicense: string;
 
-  @OneToOne(() => Account, { onDelete: "CASCADE" })
+  @OneToOne(() => Account, (account) => account.driver, { onDelete: "CASCADE" })
   @JoinColumn()
   account: Account;
 
