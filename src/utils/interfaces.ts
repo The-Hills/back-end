@@ -32,3 +32,16 @@ export interface IDriver {
   vehicle: VehicleInfo;
   booking: Booking;
 }
+
+export interface ILocation {
+  longitude: number;
+  latitude: number;
+}
+
+export interface payloadVehicle {
+  vehicleName: string;
+  vehicleColor: string;
+  licensePlates: string;
+  type: string;
+  driverId: string
+}

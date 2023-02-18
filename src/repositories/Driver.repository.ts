@@ -11,6 +11,9 @@ const driverRepositoty = {
     return await driverRepo.find({
       relations: {
         account: true,
+        vehicle: {
+          vehicleType: true
+        },
       },
     });
   },
