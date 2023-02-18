@@ -1,5 +1,5 @@
 import * as AWS from "aws-sdk";
-import * as fs from "fs";
+import { UploadedFile } from "express-fileupload";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -19,15 +19,20 @@ const s3 = new AWS.S3({
   },
 });
 
-const uploadImage = async (file) => {
-  const fileStream = fs.createReadStream(file.path);
+const uploadImage = async (file: UploadedFile) => {
+  const fileContent = Buffer.from(file.data as ArrayBuffer);
   const params = {
     Bucket: process.env.BUCKET,
-    Body: fileStream,
-    Key: file.filename,
+    Body: fileContent,
+    Key: file.name,
+    ContentType: file.mimetype,
+    ACL: "public-read",
   };
   const uploadImage = await s3.upload(params).promise();
-  return uploadImage.Location;
+  if (uploadImage.Location) {
+    return uploadImage.Location;
+  }
+  return false;
 };
 
 export default uploadImage;
