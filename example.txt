@@ -1,0 +1,115 @@
+First, let's create a new Node.js project and install the necessary dependencies:
+
+sql
+Copy code
+mkdir real-time-booking-app
+cd real-time-booking-app
+npm init -y
+npm install express typeorm socket.io
+Next, let's create a new file called app.ts and set up a basic Express server:
+
+javascript
+Copy code
+import express from 'express';
+import http from 'http';
+import { createConnection } from 'typeorm';
+import { Booking } from './entities/Booking';
+
+const app = express();
+const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+createConnection({
+  type: 'sqlite',
+  database: 'database.sqlite',
+  synchronize: true,
+  entities: [
+    Booking
+  ]
+}).then(() => {
+  console.log('Connected to database');
+  server.listen(PORT, () => {
+    console.log(Server listening on port ${PORT});
+  });
+}).catch((err) => {
+  console.error(err);
+});
+
+app.get('/bookings', async (req, res) => {
+  const bookings = await Booking.find();
+  res.json(bookings);
+});
+
+app.post('/bookings', async (req, res) => {
+  const { start_time, end_time, user_id } = req.body;
+  const booking = new Booking();
+  booking.start_time = start_time;
+  booking.end_time = end_time;
+  booking.user_id = user_id;
+  booking.status = 'created';
+  await booking.save();
+  io.emit('booking_created', booking);
+  res.json(booking);
+});
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+In this code, we're setting up a basic Express server that listens on port 3000. We're also creating a connection to a SQLite database using TypeORM, and defining an entity called Booking.
+
+We've created two routes: one to get a list of all bookings, and one to create a new booking. When a new booking is created, we're using Socket.IO to emit a booking_created event to all connected clients, so that they can update their booking lists in real-time.
+
+Finally, we're setting up a Socket.IO server that listens for client connections and disconnections.
+
+Let's create the Booking entity next. Create a new folder called entities and create a new file called Booking.ts:
+
+scss
+Copy code
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity()
+export class Booking {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  start_time: Date;
+
+  @Column()
+  end_time: Date;
+
+  @Column()
+  user_id: number;
+
+  @Column()
+  status: string;
+}
+This entity represents a booking in our app, and has properties for the start time, end time, user ID, and status.
+
+Finally, let's create a basic client-side application that connects to the Socket.IO server and displays a list of all bookings:
+
+php
+Copy code
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Booking App</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('booking_created', (booking) => {
+      const li = document.createElement('li');
+      li.innerText = Booking created: ${booking.start_time} - ${booking.end_time};
+      document.getElementById('bookings').appendChild(li);
+Viết cho
+
+

@@ -1,33 +1,21 @@
-import { ILocation } from "../utils/interfaces";
-import { degreesToRadians } from "./../utils/helper";
-
 const bookingService = {
-  calcDistance: (startPoint: ILocation, endPoint: ILocation) => {
-    if (
-      startPoint.latitude === endPoint.latitude &&
-      startPoint.longitude === endPoint.longitude
-    ) {
-      return 0;
-    } else {
-      const startingLat = degreesToRadians(startPoint.latitude);
-      const startingLong = degreesToRadians(startPoint.longitude);
-      const destinationLat = degreesToRadians(endPoint.latitude);
-      const destinationLong = degreesToRadians(endPoint.longitude);
+  caclulatedPrice: (distance: number, price: number) => {
+    let discount = 0;
 
-      const radius = 6571;
-
-      const distanceInKilometers =
-        Math.acos(
-          Math.sin(startingLat) * Math.sin(destinationLat) +
-            Math.cos(startingLat) *
-              Math.cos(destinationLat) *
-              Math.cos(startingLong - destinationLong)
-        ) * radius;
-      return distanceInKilometers;
+    if (distance >= 3 && distance <= 5) {
+      discount = (price * 5) / 100;
+    } else if (distance > 6) {
+      discount = (price * 10) / 100;
     }
+
+    const total = distance * (price - discount);
+
+    console.log(total);
+
+    return total;
   },
 
-  caclulatedPrice: () => {},
+  
 };
 
 export default bookingService;
