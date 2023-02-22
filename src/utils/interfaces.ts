@@ -12,7 +12,7 @@ export interface RegisterUserPayload {
   role: AccountType;
 }
 
-export interface loginUserPayload {
+export interface loginPayload {
   email: string;
   password: string;
 }
@@ -31,4 +31,17 @@ export interface IDriver {
   driverLicense: string;
   vehicle: VehicleInfo;
   booking: Booking;
+}
+
+export interface ILocation {
+  longitude: number;
+  latitude: number;
+}
+
+export interface payloadVehicle {
+  vehicleName: string;
+  vehicleColor: string;
+  licensePlates: string;
+  type: string;
+  driverId: string
 }

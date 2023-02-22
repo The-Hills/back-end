@@ -5,7 +5,6 @@ import { Kid } from "./entities/Kid.entity";
 import { Booking } from "./entities/Booking.entity";
 import { Driver } from "./entities/Driver.entity";
 import { VehicleInfo } from "./entities/VehicleInfo.entity";
-import { VehiclePrice } from "./entities/VehiclePrice.entity";
 import { VehicleType } from "./entities/VehicleType.entity";
 import { Payment } from "./entities/Payment.entity";
 import { Administrator } from "./entities/Administrator.entity";
@@ -29,7 +28,6 @@ export const AppDataSource = new DataSource({
     Booking,
     Driver,
     VehicleInfo,
-    VehiclePrice,
     VehicleType,
     Payment,
     Administrator,

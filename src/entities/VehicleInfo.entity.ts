@@ -6,14 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { VehicleType } from "./VehicleType.entity";
+import { Driver } from "./Driver.entity";
 
 @Entity()
 export class VehicleInfo {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
-
-  @Column()
-  vehicleTypeId: number;
 
   @Column()
   vehicleName: string;
@@ -23,6 +21,9 @@ export class VehicleInfo {
 
   @Column()
   licensePlates: string;
+
+  @OneToOne(() => Driver, (driver) => driver.vehicle)
+  driver: Driver;
 
   @OneToOne(() => VehicleType)
   @JoinColumn()

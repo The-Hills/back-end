@@ -1,4 +1,4 @@
-import {Router} from "express";
+import { Router } from "express";
 import authController from "../controllers/Auth.controller";
 import authValidator from "./../validator/authValidator";
 
@@ -13,5 +13,6 @@ authRouter.post(
 );
 
 authRouter.post("/register/driver", authController.driverRigester);
+authRouter.post("/login/driver", authController.driverLogin);
 
 export default authRouter;
