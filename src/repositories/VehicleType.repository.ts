@@ -10,14 +10,9 @@ const vehicleTypeRepository = {
   },
 
   getVehicleByName: async (name: string) => {
-    const vehicleTye = await vehicleTypeRepo.findOne({
-      where: {
-        name,
-      },
-    });
+    const vehicleTye = await vehicleTypeRepo.findOneBy({ name });
     return vehicleTye;
   },
-
 };
 
 export default vehicleTypeRepository;
