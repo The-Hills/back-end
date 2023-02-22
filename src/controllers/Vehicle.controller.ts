@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import vehicleTypeRepository from "../repositories/VehicleType.repository";
 import { payloadVehicle } from "../utils/interfaces";
 import vehicleRepository from "./../repositories/Vehicle.repository";
+import bookingService from "./../services/booking.service";
 
 const vehicleController = {
   index: async (req: Request, res: Response) => {
@@ -45,6 +45,20 @@ const vehicleController = {
     return res.status(200).json({
       message: "Successfully",
       data: result,
+    });
+  },
+
+  getPrice: async (req: Request, res: Response) => {
+    const { distance, type } = req.body;
+    const result = await bookingService.caclulatedPrice(distance, type);
+    if (result) {
+      return res.status(200).json({
+        message: "Successfully",
+        data: result,
+      });
+    }
+    return res.status(500).json({
+      message: "Error",
     });
   },
 };
