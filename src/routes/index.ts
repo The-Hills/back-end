@@ -6,6 +6,7 @@ import { isLoggedIn } from "../middlewares";
 import setCurrentUser from "./../middlewares/index";
 import driverRouter from "./driver.route";
 import vehicleRouter from "./vehicle.route";
+import bookingRouter from "./booking.route";
 
 const middlewareRouter = Router();
 
@@ -18,6 +19,7 @@ const rootRouter = Router();
 
 rootRouter.use("/auth", authRouter);
 rootRouter.use("/vehicle", vehicleRouter);
+rootRouter.use("/booking", bookingRouter);                                
 rootRouter.use("/", setCurrentUser, isLoggedIn, middlewareRouter);
 
 export default rootRouter;

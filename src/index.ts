@@ -4,7 +4,6 @@ import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
 import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
-import setCurrentUser from "./middlewares";
 import rootRouter from "./routes/index";
 
 const app = express();

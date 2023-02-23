@@ -38,7 +38,4 @@ export class User {
     cascade: true,
   })
   kid: Kid[];
-
-  @OneToMany(() => Booking, (booking) => booking.user)
-  booking: Booking[];
 }
