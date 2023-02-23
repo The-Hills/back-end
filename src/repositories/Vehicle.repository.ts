@@ -1,6 +1,6 @@
 import { AppDataSource } from "../data-source";
 import { VehicleInfo } from "../entities/VehicleInfo.entity";
-import { payloadVehicle } from "../utils/interfaces";
+import { PayloadVehicle } from "../utils/interfaces";
 import vehicleTypeRepository from "./VehicleType.repository";
 import driverRepositoty from "./Driver.repository";
 
@@ -18,7 +18,7 @@ const vehicleRepository = {
     return listVehicle;
   },
 
-  createVehicle: async (payload: payloadVehicle) => {
+  createVehicle: async (payload: PayloadVehicle) => {
     const { vehicleName, vehicleColor, licensePlates, type, driverId } =
       payload;
     const driver = await driverRepositoty.getDriverById(driverId);
@@ -46,7 +46,7 @@ const vehicleRepository = {
     return vehicle;
   },
 
-  updateVehicle: async (id: string, payload: payloadVehicle) => {
+  updateVehicle: async (id: string, payload: PayloadVehicle) => {
     const { vehicleName, vehicleColor, licensePlates } = payload;
 
     const vehicle = await vehicleRepo.findOneBy({ id });

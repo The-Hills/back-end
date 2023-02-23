@@ -1,4 +1,3 @@
-export const degreesToRadians = (degrees) => {
-  const radians = (degrees * Math.PI) / 180;
-  return radians;
-};
+export class Point {
+  constructor(public latitude: number, public longitude: number) {}
+}

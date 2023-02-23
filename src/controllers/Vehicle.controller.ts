@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { payloadVehicle } from "../utils/interfaces";
+import { PayloadVehicle } from "../utils/interfaces";
 import vehicleRepository from "./../repositories/Vehicle.repository";
 import bookingService from "./../services/booking.service";
 
@@ -18,7 +18,7 @@ const vehicleController = {
   },
 
   store: async (req: Request, res: Response) => {
-    const payload: payloadVehicle = req.body;
+    const payload: PayloadVehicle = req.body;
 
     const vehicle = await vehicleRepository.createVehicle(payload);
     if (vehicle === null) {
