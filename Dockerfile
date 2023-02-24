@@ -5,7 +5,3 @@ COPY ["test.ts", "package.json", "package-lock.json", "tsconfig.json", "./"]
 RUN npm install --production=false
 COPY . .
 CMD ["npm", "start"]
-#FROM base
-#RUN npm run build
-#CMD ["sleep", "forever"]
-#CMD ["nodejs", "build/index.js"]

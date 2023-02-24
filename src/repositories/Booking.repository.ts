@@ -50,8 +50,8 @@ const bookingRepository = {
 
     booking.distance = distance;
 
-    booking.startLocation = `'POINT(${startLocation.latitude} ${startLocation.longitude})',0`;
-    booking.endLocation = `'POINT(${endLocation.latitude} ${endLocation.longitude})',0`;
+    booking.startLocation = `POINT(${startLocation.latitude} ${startLocation.longitude})`;
+    booking.endLocation = `POINT(${endLocation.latitude} ${endLocation.longitude})`;
 
     booking.kid = kid;
     booking.fee = fee;
