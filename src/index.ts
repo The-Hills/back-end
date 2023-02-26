@@ -21,7 +21,7 @@ app.use(
 
 app.use(cors());
 
-const port = 3001;
+const port = 3000;
 
 AppDataSource.initialize()
   .then(() => {
