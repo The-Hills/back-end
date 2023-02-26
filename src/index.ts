@@ -2,6 +2,7 @@ import "reflect-metadata";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
+import * as cors from "cors";
 import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import rootRouter from "./routes/index";
@@ -18,7 +19,9 @@ app.use(
   })
 );
 
-const port = 3000;
+app.use(cors());
+
+const port = 3001;
 
 AppDataSource.initialize()
   .then(() => {
