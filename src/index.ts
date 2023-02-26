@@ -19,7 +19,11 @@ app.use(
   })
 );
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 const port = 3000;
 
