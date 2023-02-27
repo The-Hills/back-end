@@ -19,7 +19,7 @@ const rootRouter = Router();
 
 rootRouter.use("/auth", authRouter);
 rootRouter.use("/vehicle", vehicleRouter);
-rootRouter.use("/booking", bookingRouter);                                
+rootRouter.use("/booking", bookingRouter);
 rootRouter.use("/", setCurrentUser, isLoggedIn, middlewareRouter);
 
 export default rootRouter;

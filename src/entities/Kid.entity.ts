@@ -29,7 +29,7 @@ export class Kid {
 
   @Column({
     type: "varchar",
-    default: "Avatar.png",
+    default: "https://the-hills.s3.ap-northeast-1.amazonaws.com/kid/avatar.png",
   })
   avatar: string;
 
