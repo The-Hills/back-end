@@ -6,6 +6,7 @@ import * as cors from "cors";
 import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import rootRouter from "./routes/index";
+import * as fileUpload from "express-fileupload";
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(
     origin: "*",
   })
 );
+
+app.use(fileUpload());
 
 const port = 3000;
 

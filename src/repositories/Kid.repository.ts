@@ -2,6 +2,8 @@ import { Kid } from "../entities/Kid.entity";
 import { Gender } from "../utils/Enum";
 import { AppDataSource } from "./../data-source";
 import userRepository from "./User.repository";
+import { UploadedFile } from "express-fileupload";
+import uploadImage from "./../services/s3Client.service";
 
 const kidRepo = AppDataSource.getRepository(Kid);
 
@@ -34,11 +36,22 @@ const kidRepository = {
     parentId: string,
     name: string,
     age: number,
-    gender: Gender
+    gender: Gender,
+    image: UploadedFile
   ) => {
-    const parent = await userRepository.getUserById(parentId);
-    const newKid = await kidRepo.create({ name, age, gender, parent });
-    return await kidRepo.save(newKid);
+    console.log("image =>", image);
+    const avatar = await uploadImage("kid", image);
+    if (avatar) {
+      const parent = await userRepository.getUserById(parentId);
+      const newKid = kidRepo.create({
+        name,
+        age,
+        gender,
+        parent,
+        avatar,
+      });
+      return await kidRepo.save(newKid);
+    }
   },
 
   deleteKid: async (id: string) => {
