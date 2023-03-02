@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var user_route_1 = require("./user.route");
+var auth_route_1 = require("./auth.route");
+var kid_route_1 = require("./kid.route");
+var express_1 = require("express");
+var middlewares_1 = require("../middlewares");
+var index_1 = require("./../middlewares/index");
+var driver_route_1 = require("./driver.route");
+var vehicle_route_1 = require("./vehicle.route");
+var booking_route_1 = require("./booking.route");
+var middlewareRouter = (0, express_1.Router)();
+middlewareRouter.use("/driver", driver_route_1.default);
+// middlewareRouter.use("/vehicle", vehicleRouter);
+middlewareRouter.use("/kid", kid_route_1.default);
+middlewareRouter.use("/", user_route_1.default);
+var rootRouter = (0, express_1.Router)();
+rootRouter.use("/auth", auth_route_1.default);
+rootRouter.use("/vehicle", vehicle_route_1.default);
+rootRouter.use("/booking", booking_route_1.default);
+rootRouter.use("/", index_1.default, middlewares_1.isLoggedIn, middlewareRouter);
+exports.default = rootRouter;
+//# sourceMappingURL=index.js.map
