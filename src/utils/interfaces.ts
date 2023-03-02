@@ -32,6 +32,8 @@ export interface IDriver {
   driverLicense: string;
   vehicle: VehicleInfo;
   booking: Booking;
+  currentLocation: ILocation;
+  isVerify: boolean;
 }
 
 export interface ILocation {
@@ -56,4 +58,11 @@ export interface PayloadBooking {
   dirverId: string;
   kidId: string;
   status: string;
+}
+
+export interface PayloadAdmin {
+  name: string;
+  email: string;
+  password: string;
+  role: AccountType;
 }

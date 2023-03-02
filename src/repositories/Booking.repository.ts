@@ -16,7 +16,7 @@ const bookingRepository = {
         kid: {
           parent: true,
         },
-        dirver: {
+        driver: {
           vehicle: true,
         },
       },
@@ -73,13 +73,13 @@ const bookingRepository = {
         kid: {
           parent: true,
         },
-        dirver: {
+        driver: {
           vehicle: true,
         },
       },
     });
     bookingRepo.merge(booking, {
-      dirver: driver,
+      driver: driver,
       status: BookingStatus.onRide,
     });
     return await bookingRepo.save(booking);
@@ -94,7 +94,7 @@ const bookingRepository = {
         kid: {
           parent: true,
         },
-        dirver: {
+        driver: {
           vehicle: true,
         },
       },

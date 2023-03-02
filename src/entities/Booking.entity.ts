@@ -63,7 +63,7 @@ export class Booking {
   payment: Payment;
 
   @ManyToOne(() => Driver, (driver) => driver.booking)
-  dirver: Driver;
+  driver: Driver;
 
   @ManyToOne(() => Kid, (kid) => kid.booking)
   kid: Kid;

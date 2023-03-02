@@ -8,6 +8,7 @@ import {
 import { AccountType } from "../utils/Enum";
 import { User } from "./User.entity";
 import { Driver } from "./Driver.entity";
+import { Administrator } from "./Administrator.entity";
 
 @Entity()
 export class Account {
@@ -32,4 +33,7 @@ export class Account {
 
   @OneToOne(() => Driver, (driver) => driver.account)
   driver?: Driver;
+
+  @OneToOne(() => Administrator, (admin) => admin.account)
+  admin?: Administrator;
 }
