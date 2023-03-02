@@ -90,7 +90,41 @@ const authController = {
         role,
       });
     }
-  }
+  },
+
+  adminRegister: async (req: Request, res: Response) => {
+    const data = req.body;
+    console.log(data);
+    data.role = AccountType.admin;
+    const acc = await authService.adminRegister(data);
+    if (!acc) {
+      return res.status(500).json({ message: "Email is exits" });
+    }
+    res.status(200).json({ message: "Successfully", data: acc });
+  },
+
+  adminLogin: async (req: Request, res: Response) => {
+    const data: loginPayload = req.body;
+    const result = await authService.adminLogin(data);
+    if (result === null) {
+      res
+        .status(401)
+        .json({ message: "Authentication failed. User not found." });
+    } else if (!result) {
+      res
+        .status(401)
+        .json({ message: "Authentication failed. Wrong password." });
+    } else {
+      const { token, id, role } = result;
+      console.log(token);
+      res.status(200).json({
+        message: "Successfully",
+        token,
+        id,
+        role,
+      });
+    }
+  },
 };
 
 export default authController;

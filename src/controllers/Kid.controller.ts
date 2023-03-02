@@ -4,7 +4,7 @@ import kidRepository from "./../repositories/Kid.repository";
 const kidController = {
   index: async (req: Request, res: Response) => {
     const kids = await kidRepository.getAllKid();
-    res.json(kids);
+    res.status(200).json({ message: "Successfully", data: kids });
   },
 
   show: async (req: Request, res: Response) => {
@@ -19,8 +19,14 @@ const kidController = {
 
   store: async (req: Request, res: Response) => {
     const { name, age, gender, parentId } = req.body;
-
-    const kid = await kidRepository.createKid(parentId, name, age, gender);
+    const image = req.files.avatar;
+    const kid = await kidRepository.createKid(
+      parentId,
+      name,
+      age,
+      gender,
+      image
+    );
     res.json(kid);
   },
 

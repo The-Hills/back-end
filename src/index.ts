@@ -2,10 +2,11 @@ import "reflect-metadata";
 import * as express from "express";
 import * as morgan from "morgan";
 import * as bodyParser from "body-parser";
+import * as cors from "cors";
 import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
-import setCurrentUser from "./middlewares";
 import rootRouter from "./routes/index";
+import * as fileUpload from "express-fileupload";
 
 const app = express();
 
@@ -18,6 +19,14 @@ app.use(
     extended: true,
   })
 );
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+app.use(fileUpload());
 
 const port = 3000;
 

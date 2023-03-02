@@ -5,12 +5,13 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  Raw,
 } from "typeorm";
 import { BookingStatus } from "../utils/Enum";
 import { Driver } from "./Driver.entity";
 import { Payment } from "./Payment.entity";
-import { User } from "./User.entity";
 import { Kid } from "./Kid.entity";
+import { Point } from "../utils/helper";
 
 @Entity()
 export class Booking {
@@ -30,27 +31,39 @@ export class Booking {
   })
   status: BookingStatus;
 
-  @Column("datetime")
-  startTime: string;
+  @Column({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+    nullable: false,
+  })
+  startTime: Date;
 
-  @Column("datetime")
-  endTime: string;
+  @Column({
+    type: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+    nullable: false,
+    onUpdate: "CURRENT_TIMESTAMP",
+  })
+  endTime: Date;
 
-  @Column({ type: "point" })
+  @Column({
+    type: "point",
+    nullable: true,
+  })
   startLocation: string;
 
-  @Column({ type: "point" })
+  @Column({
+    type: "point",
+    nullable: true,
+  })
   endLocation: string;
 
   @OneToOne(() => Payment)
   @JoinColumn()
   payment: Payment;
 
-  @ManyToOne(() => User, (user) => user.booking)
-  user: User;
-
   @ManyToOne(() => Driver, (driver) => driver.booking)
-  dirver: Driver;
+  driver: Driver;
 
   @ManyToOne(() => Kid, (kid) => kid.booking)
   kid: Kid;
