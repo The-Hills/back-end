@@ -12,8 +12,9 @@ const driverRepositoty = {
       relations: {
         account: true,
         vehicle: {
-          vehicleType: true
+          vehicleType: true,
         },
+        booking: true,
       },
     });
   },
@@ -50,7 +51,17 @@ const driverRepositoty = {
   },
 
   updateDriver: async (id: string, payload: IDriver) => {
-    const { name, phone, gender, avatar, cardId, driverLicense } = payload;
+    const {
+      name,
+      phone,
+      gender,
+      avatar,
+      cardId,
+      driverLicense,
+      isVerify,
+      currentLocation,
+    } = payload;
+    console.log(payload);
     const driver = await driverRepo.findOneBy({ id });
     if (driver) {
       driver.name = name || driver.name;
@@ -59,6 +70,11 @@ const driverRepositoty = {
       driver.gender = gender || driver.gender;
       driver.cardId = cardId || driver.cardId;
       driver.driverLicense = driverLicense || driver.driverLicense;
+      driver.currentLocation =
+        `POINT(${currentLocation?.latitude} ${currentLocation?.longitude})` ||
+        driver.currentLocation;
+      (driver.isVerify = isVerify) || driver.isVerify;
+      console.log(driver);
       return await driverRepo.save(driver);
     }
     return null;

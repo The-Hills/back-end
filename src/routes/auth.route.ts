@@ -15,4 +15,7 @@ authRouter.post(
 authRouter.post("/register/driver", authController.driverRigester);
 authRouter.post("/login/driver", authController.driverLogin);
 
+authRouter.post("/register/admin", authController.adminRegister);
+authRouter.post("/login/admin", authController.adminLogin);
+
 export default authRouter;

@@ -46,6 +46,17 @@ export class Driver {
   @Column()
   driverLicense: string;
 
+  @Column({
+    default: false,
+  })
+  isVerify: boolean;
+
+  @Column({
+    type: "point",
+    nullable: true,
+  })
+  currentLocation: string;
+
   @OneToOne(() => Account, (account) => account.driver, { onDelete: "CASCADE" })
   @JoinColumn()
   account: Account;
@@ -54,6 +65,6 @@ export class Driver {
   @JoinColumn()
   vehicle: VehicleInfo;
 
-  @OneToMany(() => Booking, (booking) => booking.dirver)
+  @OneToMany(() => Booking, (booking) => booking.driver)
   booking: Booking[];
 }

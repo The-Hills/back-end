@@ -10,6 +10,7 @@ const accountRepository = {
       relations: {
         user: true,
         driver: true,
+        admin: true,
       },
     });
   },
@@ -22,6 +23,7 @@ const accountRepository = {
       relations: {
         user: true,
         driver: true,
+        admin: true,
       },
     });
   },
@@ -38,9 +40,7 @@ const accountRepository = {
   },
 
   createAccount: async (email: string, password: string, role: AccountType) => {
-    return await accRepo.save(
-      await accRepo.create({ email, password, type: role })
-    );
+    return await accRepo.save(accRepo.create({ email, password, type: role }));
   },
 
   exitsEmail: async (email: string) => {

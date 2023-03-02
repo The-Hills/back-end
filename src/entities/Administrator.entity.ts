@@ -14,12 +14,9 @@ export class Administrator {
   id: string;
 
   @Column()
-  firstName: string;
+  name: string;
 
-  @Column()
-  lastName: string;
-
-  @OneToOne(() => Account)
+  @OneToOne(() => Account, (account) => account.admin)
   @JoinColumn()
   account: Account;
 }

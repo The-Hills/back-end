@@ -4,7 +4,7 @@ import kidRepository from "./../repositories/Kid.repository";
 const kidController = {
   index: async (req: Request, res: Response) => {
     const kids = await kidRepository.getAllKid();
-    res.json(kids);
+    res.status(200).json({ message: "Successfully", data: kids });
   },
 
   show: async (req: Request, res: Response) => {
