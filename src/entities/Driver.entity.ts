@@ -19,7 +19,11 @@ export class Driver {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    type: "enum",
+    enum: Gender,
+    default: Gender.male,
+  })
   gender: Gender;
 
   @Column()
