@@ -3,6 +3,7 @@ import { VehicleInfo } from "../entities/VehicleInfo.entity";
 import { PayloadVehicle } from "../utils/interfaces";
 import vehicleTypeRepository from "./VehicleType.repository";
 import driverRepositoty from "./Driver.repository";
+import uploadImage from "./../services/s3Client.service";
 
 const vehicleRepo = AppDataSource.getRepository(VehicleInfo);
 
@@ -19,19 +20,28 @@ const vehicleRepository = {
   },
 
   createVehicle: async (payload: PayloadVehicle) => {
-    const { vehicleName, vehicleColor, licensePlates, type, driverId } =
-      payload;
-    const driver = await driverRepositoty.getDriverById(driverId);
-    const vehicleType = await vehicleTypeRepository.getVehicleByName(type);
-    const vehicle = await vehicleRepo.create({
+    const {
       vehicleName,
       vehicleColor,
       licensePlates,
-      vehicleType,
-      driver,
-    });
-
-    return await vehicleRepo.save(vehicle);
+      vehicleImage,
+      type,
+      driverId,
+    } = payload;
+    const image = await uploadImage("vehicle", vehicleImage);
+    const driver = await driverRepositoty.getDriverById(driverId);
+    const vehicleType = await vehicleTypeRepository.getVehicleByName(type);
+    if (image) {
+      const vehicle = await vehicleRepo.create({
+        vehicleName,
+        vehicleColor,
+        licensePlates,
+        vehicleType,
+        vehicleImage: image,
+        driver,
+      });
+      return await vehicleRepo.save(vehicle);
+    }
   },
 
   getVehicleById: async (id: string) => {

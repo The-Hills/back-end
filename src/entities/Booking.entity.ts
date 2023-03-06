@@ -12,6 +12,7 @@ import { Driver } from "./Driver.entity";
 import { Payment } from "./Payment.entity";
 import { Kid } from "./Kid.entity";
 import { Point } from "../utils/helper";
+import { VehicleType } from "./VehicleType.entity";
 
 @Entity()
 export class Booking {
@@ -50,13 +51,23 @@ export class Booking {
     type: "point",
     nullable: true,
   })
-  startLocation: string;
+  startPosition: string;
 
   @Column({
     type: "point",
     nullable: true,
   })
+  endPosition: string;
+
+  @Column()
+  startLocation: string;
+
+  @Column()
   endLocation: string;
+
+  @OneToOne(() => VehicleType, (vehicle) => vehicle.vehicleInfo)
+  @JoinColumn()
+  vehicleType: VehicleType;
 
   @OneToOne(() => Payment)
   @JoinColumn()

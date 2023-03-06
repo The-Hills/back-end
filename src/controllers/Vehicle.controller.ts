@@ -20,6 +20,10 @@ const vehicleController = {
   store: async (req: Request, res: Response) => {
     const payload: PayloadVehicle = req.body;
 
+    const image = req.files.image;
+
+    payload.vehicleImage = image;
+
     const vehicle = await vehicleRepository.createVehicle(payload);
     if (vehicle === null) {
       return res.status(500).json({
@@ -48,19 +52,6 @@ const vehicleController = {
     });
   },
 
-  getPrice: async (req: Request, res: Response) => {
-    const { distance, type } = req.body;
-    const result = await bookingService.caclulatedPrice(distance, type);
-    if (result) {
-      return res.status(200).json({
-        message: "Successfully",
-        data: result,
-      });
-    }
-    return res.status(500).json({
-      message: "Error",
-    });
-  },
 };
 
 export default vehicleController;
