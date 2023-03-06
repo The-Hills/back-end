@@ -11,15 +11,14 @@ import bookingRouter from "./booking.route";
 const middlewareRouter = Router();
 
 middlewareRouter.use("/driver", driverRouter);
-// middlewareRouter.use("/vehicle", vehicleRouter);
+middlewareRouter.use("/vehicle", vehicleRouter);
+middlewareRouter.use("/booking", bookingRouter);
 middlewareRouter.use("/kid", kidRouter);
 middlewareRouter.use("/", userRouter);
 
 const rootRouter = Router();
 
 rootRouter.use("/auth", authRouter);
-rootRouter.use("/vehicle", vehicleRouter);
-rootRouter.use("/booking", bookingRouter);
 rootRouter.use("/", setCurrentUser, isLoggedIn, middlewareRouter);
 
 export default rootRouter;
