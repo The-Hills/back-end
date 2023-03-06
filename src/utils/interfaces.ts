@@ -2,6 +2,7 @@ import { AccountType, DriverStatus, Gender } from "./Enum";
 import { VehicleInfo } from "./../entities/VehicleInfo.entity";
 import { Booking } from "./../entities/Booking.entity";
 import { Payment } from "./../entities/Payment.entity";
+import { VehicleType } from "./../entities/VehicleType.entity";
 
 export interface RegisterUserPayload {
   email: string;
@@ -45,6 +46,7 @@ export interface PayloadVehicle {
   vehicleName: string;
   vehicleColor: string;
   licensePlates: string;
+  vehicleImage: string;
   type: string;
   driverId: string;
 }
@@ -52,12 +54,15 @@ export interface PayloadVehicle {
 export interface PayloadBooking {
   distance: number;
   fee: number;
-  startLocation: ILocation;
-  endLocation: ILocation;
+  startLocation: string;
+  endLocation: string;
+  startPosition: ILocation;
+  endPosition: ILocation;
   payment: Payment;
-  dirverId: string;
+  driverId: string;
   kidId: string;
   status: string;
+  typeVehicle: string;
 }
 
 export interface PayloadAdmin {

@@ -11,6 +11,7 @@ import * as jwt from "jsonwebtoken";
 import { IDriver } from "./../utils/interfaces";
 import driverRepositoty from "./../repositories/Driver.repository";
 import adminRepository from "./../repositories/Admin.repository";
+import { DriverStatus } from "../utils/Enum";
 
 const authService = {
   login: async (paylod: loginPayload) => {
@@ -70,15 +71,16 @@ const authService = {
         hashedPassword,
         role
       );
-      return await driverRepositoty.createDriver(
+      const data = {
         name,
         phone,
         gender,
         avatar,
         cardId,
         driverLicense,
-        acc
-      );
+        acc,
+      };
+      return await driverRepositoty.createDriver(data);
     }
     return false;
   },
@@ -142,7 +144,13 @@ const authService = {
     return null;
   },
 
-  logout: () => {},
+  logout: async (id: string) => {
+    const driver = await driverRepositoty.getDriverById(id);
+    if (driver) {
+      return await driverRepositoty.logout(id);
+    }
+    return null;
+  },
 };
 
 export default authService;

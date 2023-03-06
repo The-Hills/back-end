@@ -22,18 +22,15 @@ const s3Client = new S3Client({
 
 const s3 = new AWS.S3({ region: process.env.REGION });
 
-const uploadImage = async (folder, file: UploadedFile) => {
-  console.log("file =>", file);
-  const fileContent = Buffer.from(file.data as ArrayBuffer);
+const uploadImage = async (folder: string, file: UploadedFile) => {
+  const fileContent = Buffer.from(file?.data as ArrayBuffer);
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.BUCKET,
     Body: fileContent,
-    Key: `${folder}${file.name}`,
+    Key: `${folder}/${file.name}`,
     ContentType: file.mimetype,
-    // ACL: "public-read",
   };
 
-  console.log(params);
   const uploadImage = await s3.upload(params).promise();
   if (uploadImage.Location) {
     return uploadImage.Location;
