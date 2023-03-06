@@ -9,9 +9,9 @@ import { VehicleType } from "./entities/VehicleType.entity";
 import { Payment } from "./entities/Payment.entity";
 import { Administrator } from "./entities/Administrator.entity";
 import { Account } from "./entities/Account.entity";
-import * as dotenv from "dotenv";
+// import * as dotenv from "dotenv";
 
-dotenv.config();
+require("dotenv").config();
 
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -36,3 +36,9 @@ export const AppDataSource = new DataSource({
   migrations: [],
   subscribers: [],
 });
+
+  // host: "the-hills.cziwnz9dwd78.ap-northeast-1.rds.amazonaws.com",
+  // port: 3306,
+  // username: "admin",
+  // password: "Thehills2023",
+  // database: "the_hills",
