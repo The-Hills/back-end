@@ -1,52 +1,51 @@
 import { Request, Response } from "express";
 import * as dotenv from "dotenv";
-import dateFormat from "dateformat";
-// import { sortObject } from "sort-object";
+// import dateFormat from "dateformat";
 import * as QueryString from "qs";
+import { getCreateDate } from './../utils/helper';
+import paymentRepository from './../repositories/Payment.repository';
+import { PaymentPayload } from "../utils/interfaces";
+import { PaymentStatus } from "../utils/Enum";
 
 dotenv.config();
 
-const create_Payment_URL = (req: Request, res: Response) => {
-  const ipAddr =
-    req.headers["x-forwarded-for"] ||
-    req.connection.remoteAddress ||
-    req.socket.remoteAddress ||
-    req.connection.socket.remoteAddress;
+
+
+// Create URL 
+export const create_Payment_URL = async (req: Request, res: Response) => {
 
   const tmnCode = process.env.VNP_TMNCODE;
   const secretKey = process.env.VNP_HASHSECRET;
   let vnpUrl = process.env.VNP_URL;
-  const returnUrl = process.env.VNP_RETURNURL;
+  const returnUrl = process.env.VNP_RETURN_URL;
 
-  const date = new Date();
+  const {amount, bankCode, orderInfo, ipAddress} = req.body
 
-  const createDate = dateFormat(date, "yyyymmddHHmmss");
-  const orderId = dateFormat(date, "HHmmss");
-  const amount = req.body.amount;
-  const bankCode = req.body.bankCode;
+   const vnp_CreateDate = getCreateDate(new Date());
 
-  const orderInfo = req.body.orderInfo;
-  // const orderType = req.body.orderType;
-  let locale = req.body.language;
-  if (locale === null || locale === "") {
-    locale = "vn";
-  }
+   const currCode = 'VND';
 
-  const currCode = "VND";
+   const data: PaymentPayload = req.body;
+   data.createDate = vnp_CreateDate;
+   data.paymentInfo = orderInfo;
+   data.amount = amount * 100;
+
+   const payment = await paymentRepository.createPayment(data)
+  
   let vnp_Params = {};
   vnp_Params["vnp_Version"] = "2.1.0";
   vnp_Params["vnp_Command"] = "pay";
   vnp_Params["vnp_TmnCode"] = tmnCode;
   // vnp_Params['vnp_Merchant'] = ''
-  vnp_Params["vnp_Locale"] = locale;
+  vnp_Params["vnp_Locale"] = 'en';
   vnp_Params["vnp_CurrCode"] = currCode;
-  vnp_Params["vnp_TxnRef"] = orderId;
+  vnp_Params["vnp_TxnRef"] = payment.id;
   vnp_Params["vnp_OrderInfo"] = orderInfo;
   vnp_Params["vnp_Amount"] = amount * 100;
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
-  vnp_Params["vnp_IpAddr"] = ipAddr;
-  vnp_Params["vnp_CreateDate"] = createDate;
-  if (bankCode !== null && bankCode !== "") {
+  vnp_Params["vnp_IpAddr"] = ipAddress;
+  vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
+  if (bankCode !== null && bankCode !== "" && bankCode !== undefined) {
     vnp_Params["vnp_BankCode"] = bankCode;
   }
 
@@ -55,19 +54,21 @@ const create_Payment_URL = (req: Request, res: Response) => {
   const signData = QueryString.stringify(vnp_Params, { encode: false });
   const crypto = require("crypto");
   const hmac = crypto.createHmac("sha512", secretKey);
-  const signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+  const signed = hmac.update( Buffer.from(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + QueryString.stringify(vnp_Params, { encode: false });
 
-  res.redirect(vnpUrl);
+  res.status(200).json({url: vnpUrl})
 };
 
-const checkIsSuccessfully = (req: Request, res: Response) => {
+// VPN reurn response when user request payment
+export const checkIsSuccessfully = async (req: Request, res: Response) => {
   let vnp_Params = req.query;
   let secureHash = vnp_Params["vnp_SecureHash"];
 
   let orderId = vnp_Params["vnp_TxnRef"];
   let rspCode = vnp_Params["vnp_ResponseCode"];
+  const amount = vnp_Params['vnp_Amount']
 
   delete vnp_Params["vnp_SecureHash"];
   delete vnp_Params["vnp_SecureHashType"];
@@ -78,31 +79,36 @@ const checkIsSuccessfully = (req: Request, res: Response) => {
   let signData = querystring.stringify(vnp_Params, { encode: false });
   let crypto = require("crypto");
   let hmac = crypto.createHmac("sha512", secretKey);
-  let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+  let signed = hmac.update( Buffer.from(signData, "utf-8")).digest("hex");
 
-  let paymentStatus = "0"; // Giả sử '0' là trạng thái khởi tạo giao dịch, chưa có IPN. Trạng thái này được lưu khi yêu cầu thanh toán chuyển hướng sang Cổng thanh toán VNPAY tại đầu khởi tạo đơn hàng.
-  // let paymentStatus = "1"; // Giả sử '1' là trạng thái thành công bạn cập nhật sau IPN được gọi và trả kết quả về nó
-  // let paymentStatus = "2"; // Giả sử '2' là trạng thái thất bại bạn cập nhật sau IPN được gọi và trả kết quả về nó
+  
+  const payment = await paymentRepository.getPaymentById(orderId)
 
+  let paymentStatus = payment.status ;
+  
   let checkOrderId = false; // Mã đơn hàng "giá trị của vnp_TxnRef" VNPAY phản hồi tồn tại trong CSDL của bạn
-  if (orderId) {
+  if (orderId === payment.id) {
     checkOrderId = true;
   }
-  let checkAmount = true; // Kiểm tra số tiền "giá trị của vnp_Amout/100" trùng khớp với số tiền của đơn hàng trong CSDL của bạn
+  let checkAmount = false;
+  
+  if(Number(amount) === payment.amount) checkAmount = true;
+
+  // Kiểm tra số tiền "giá trị của vnp_Amout/100" trùng khớp với số tiền của đơn hàng trong CSDL của bạn
   if (secureHash === signed) {
     //kiểm tra checksum
     if (checkOrderId) {
       if (checkAmount) {
-        if (paymentStatus == "0") {
+        if (paymentStatus === 'DOING' ) {
           //kiểm tra tình trạng giao dịch trước khi cập nhật tình trạng thanh toán
           if (rspCode == "00") {
             //thanh cong
-            //paymentStatus = '1'
+            paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.SUCCESS)
             // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
-            res.status(200).json({ RspCode: "00", Message: "Success" });
+            res.status(200).json({ RspCode: "00", Message: "Success", vnp_Params });
           } else {
             //that bai
-            //paymentStatus = '2'
+             paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.FAIL)
             // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
             res.status(200).json({ RspCode: "00", Message: "Success" });
           }
@@ -123,8 +129,10 @@ const checkIsSuccessfully = (req: Request, res: Response) => {
   }
 };
 
-const returnURL = (req: Request, res: Response) => {
+export const VNPayReturnURL = (req: Request, res: Response) => {
   let vnp_Params = req.query;
+
+  console.log('VNPayReturnURL')
 
   const secureHash = vnp_Params["vnp_SecureHash"];
 
@@ -133,25 +141,24 @@ const returnURL = (req: Request, res: Response) => {
 
   vnp_Params = sortObject(vnp_Params);
 
-  const tmnCode = process.env.VNP_TMNCODE;
   const secretKey = process.env.VNP_HASHSECRET;
 
   const querystring = require("qs");
   const signData = querystring.stringify(vnp_Params, { encode: false });
   const crypto = require("crypto");
   const hmac = crypto.createHmac("sha512", secretKey);
-  const signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+  const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
   if (secureHash === signed) {
     //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-
-    res.json("success", { code: vnp_Params["vnp_ResponseCode"] });
+    
+    res.redirect('https://www.facebook.com/')   
   } else {
-    res.json("success", { code: "97" });
+    res.status(500).json({message: "Fail", code: "97" });
   }
 };
 
-function sortObject(obj: any) {
+const sortObject = (obj: any) => {
   let sorted = {};
   let str = [];
   let key: any;

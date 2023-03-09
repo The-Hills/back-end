@@ -19,5 +19,11 @@ export enum BookingStatus {
 export enum DriverStatus {
   active = "active",
   unActive = "unActive",
-  onRide = "on Ride",
+  onRide = "onRide",
+}
+
+export enum PaymentStatus {
+  DOING = 'DOING',
+  SUCCESS = 'SUCCESS',
+  FAIL = 'FAIL'
 }
