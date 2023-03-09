@@ -32,7 +32,6 @@ const userRepository = {
     if (user === null) {
       return null;
     }
-    console.log("get ID");
     return user;
   },
 

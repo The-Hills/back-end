@@ -5,6 +5,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@types/node": "^16.11.10",
+    "@types/qrcode": "^1.5.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
     "ts-node": "10.7.0",
@@ -26,12 +27,12 @@
     "express-session": "^1.17.3",
     "express-validator": "^6.14.3",
     "jsonwebtoken": "^9.0.0",
-    "mysql": "^2.14.1",
-    "mysql2": "^2.3.3",
+    "mysql2": "^3.2.0",
+    "qrcode": "^1.5.1",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.6.0",
     "sort-object": "^3.0.3",
-    "typeorm": "0.3.11"
+    "typeorm": "^0.3.12"
   },
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only ./src/index.ts",

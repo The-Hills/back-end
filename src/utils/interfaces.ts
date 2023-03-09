@@ -1,4 +1,4 @@
-import { AccountType, DriverStatus, Gender } from "./Enum";
+import { AccountType, DriverStatus, Gender, PaymentStatus } from "./Enum";
 import { VehicleInfo } from "./../entities/VehicleInfo.entity";
 import { Booking } from "./../entities/Booking.entity";
 import { Payment } from "./../entities/Payment.entity";
@@ -70,4 +70,12 @@ export interface PayloadAdmin {
   email: string;
   password: string;
   role: AccountType;
+}
+
+export interface PaymentPayload {
+  
+  amount: number,
+  createDate: string,
+  paymentInfo: string,
+  status: PaymentStatus
 }
