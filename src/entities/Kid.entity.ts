@@ -33,7 +33,10 @@ export class Kid {
   })
   avatar: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    default: "QR code"
+  })
   qr: string;
 
   @ManyToOne(() => User, (user) => user.kid, {

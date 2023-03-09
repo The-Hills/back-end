@@ -61,7 +61,6 @@ const kidRepository = {
 
 
     const qr = await generateQR(newKid.id)
-    console.log('qr =>', qr)
     newKid.qr = qr
     await kidRepo.save(newKid)
     return newKid;
