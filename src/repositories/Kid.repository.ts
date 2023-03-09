@@ -4,6 +4,7 @@ import { AppDataSource } from "./../data-source";
 import userRepository from "./User.repository";
 import { UploadedFile } from "express-fileupload";
 import uploadImage from "./../services/s3Client.service";
+import generateQR from './../services/QRcode.service';
 
 const kidRepo = AppDataSource.getRepository(Kid);
 
@@ -45,9 +46,11 @@ const kidRepository = {
     gender: Gender,
     image: UploadedFile
   ) => {
-    const avatar = await uploadImage("kid", image);
-    if (avatar) {
-      const parent = await userRepository.getUserById(parentId);
+    let avatar;
+    if(image) {
+      avatar = await uploadImage("kid", image);
+    }
+    const parent = await userRepository.getUserById(parentId);
       const newKid = kidRepo.create({
         name,
         age,
@@ -55,8 +58,9 @@ const kidRepository = {
         parent,
         avatar,
       });
+      const qr = await generateQR(newKid.id)
+      newKid.qr = qr
       return await kidRepo.save(newKid);
-    }
   },
 
   updateKid: async (id: string, payload) => {
