@@ -1,8 +1,9 @@
-import { Gender } from "../utils/Enum";
+import { DriverStatus, Gender } from "../utils/Enum";
 import { IDriver } from "../utils/interfaces";
 import { AppDataSource } from "./../data-source";
 import { Driver } from "./../entities/Driver.entity";
 import { Account } from "./../entities/Account.entity";
+import uploadImage from "./../services/s3Client.service";
 
 const driverRepo = AppDataSource.getRepository(Driver);
 
@@ -20,7 +21,20 @@ const driverRepositoty = {
   },
 
   getDriverById: async (id: string) => {
-    const driver = await driverRepo.findOneBy({ id });
+    const driver = await driverRepo.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        vehicle: {
+          vehicleType: true,
+        },
+        booking: {
+          kid: true,
+        },
+        account: true,
+      },
+    });
 
     if (driver === null) {
       return null;
@@ -28,26 +42,31 @@ const driverRepositoty = {
     return driver;
   },
 
-  createDriver: async (
-    name: string,
-    phone: string,
-    gender: Gender,
-    avatar: string,
-    cardId: number,
-    driverLicense: string,
-    acc: Account
-  ) => {
-    const newDriver = await driverRepo.create({
-      name,
-      phone,
-      gender,
-      avatar,
-      cardId,
-      driverLicense,
-      account: acc,
-    });
-
-    return await driverRepo.save(newDriver);
+  createDriver: async (payload) => {
+    const { name, phone, gender, avatar, cardId, driverLicense, acc } = payload;
+    let image = "";
+    if (avatar) {
+      const res = await uploadImage("driver", avatar);
+      if (res) {
+        image = res;
+      }
+    }
+    if (driverLicense) {
+      const license = await uploadImage("driver", driverLicense);
+      if (license) {
+        const newDriver = driverRepo.create({
+          name,
+          phone,
+          gender,
+          avatar: image,
+          cardId,
+          driverLicense: license,
+          account: acc,
+        });
+        return await driverRepo.save(newDriver);
+      }
+    }
+    return false;
   },
 
   updateDriver: async (id: string, payload: IDriver) => {
@@ -60,12 +79,25 @@ const driverRepositoty = {
       driverLicense,
       isVerify,
       currentLocation,
+      status,
     } = payload;
-    console.log(payload);
-    const driver = await driverRepo.findOneBy({ id });
+    const driver = await driverRepo.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        booking: true,
+        vehicle: true,
+        account: true,
+      },
+    });
+    let image;
+    if (avatar) {
+      image = await uploadImage("driver", avatar);
+    }
     if (driver) {
       driver.name = name || driver.name;
-      driver.avatar = avatar || driver.avatar;
+      driver.avatar = image || driver.avatar;
       driver.phone = phone || driver.phone;
       driver.gender = gender || driver.gender;
       driver.cardId = cardId || driver.cardId;
@@ -73,8 +105,14 @@ const driverRepositoty = {
       driver.currentLocation =
         `POINT(${currentLocation?.latitude} ${currentLocation?.longitude})` ||
         driver.currentLocation;
+      driver.booking = driver.booking;
+      driver.vehicle = driver.vehicle;
+      driver.account = driver.account;
       (driver.isVerify = isVerify) || driver.isVerify;
-      console.log(driver);
+      driver.status = status;
+      if (!isVerify) {
+        driver.status = DriverStatus.unActive;
+      }
       return await driverRepo.save(driver);
     }
     return null;
@@ -88,7 +126,22 @@ const driverRepositoty = {
     return null;
   },
 
-  driverChangeStatus: () => {},
+  logout: async (id: string) => {
+    const driver = await driverRepo.findOneBy({ id });
+    if (driver) {
+      driver.status = DriverStatus.unActive;
+      driver.currentLocation = null;
+    }
+    return driverRepo.save(driver);
+  },
+
+  updateStatus: async (id: string, status: DriverStatus) => {
+    const driver = await driverRepo.findOneBy({ id });
+    if (driver) {
+      driver.status = status;
+    }
+    return driverRepo.save(driver);
+  },
 };
 
 export default driverRepositoty;

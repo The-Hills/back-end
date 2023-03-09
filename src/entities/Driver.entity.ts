@@ -19,7 +19,11 @@ export class Driver {
   @Column()
   name: string;
 
-  @Column()
+  @Column({
+    type: "enum",
+    enum: Gender,
+    default: Gender.male,
+  })
   gender: Gender;
 
   @Column()
@@ -61,7 +65,7 @@ export class Driver {
   @JoinColumn()
   account: Account;
 
-  @OneToOne(() => VehicleInfo)
+  @OneToOne(() => VehicleInfo, { onDelete: "CASCADE" })
   @JoinColumn()
   vehicle: VehicleInfo;
 

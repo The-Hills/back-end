@@ -22,6 +22,9 @@ export class VehicleInfo {
   @Column()
   licensePlates: string;
 
+  @Column()
+  vehicleImage: string;
+
   @OneToOne(() => Driver, (driver) => driver.vehicle)
   driver: Driver;
 

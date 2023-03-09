@@ -33,6 +33,9 @@ export class Kid {
   })
   avatar: string;
 
+  @Column()
+  qr: string;
+
   @ManyToOne(() => User, (user) => user.kid, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",

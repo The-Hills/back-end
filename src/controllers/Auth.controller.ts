@@ -17,7 +17,6 @@ const authController = {
   },
 
   login: async (req: Request, res: Response) => {
-    console.log("login");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -62,6 +61,8 @@ const authController = {
       return res.status(400).json({ errors: errors.array() });
     }
     const data: IDriver = req.body;
+    data.avatar = req?.files?.avatar;
+    data.driverLicense = req?.files?.driverLicense;
     data.role = AccountType.driver;
     const acc = await authService.driverRegister(data);
     if (!acc) {

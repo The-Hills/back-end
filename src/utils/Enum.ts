@@ -13,11 +13,17 @@ export enum AccountType {
 export enum BookingStatus {
   onTracking = "onTracking",
   onRide = "onRide",
-  conpleted = "completed"
+  conpleted = "completed",
 }
 
 export enum DriverStatus {
   active = "active",
   unActive = "unActive",
+  onRide = "onRide",
 }
 
+export enum PaymentStatus {
+  DOING = 'DOING',
+  SUCCESS = 'SUCCESS',
+  FAIL = 'FAIL'
+}

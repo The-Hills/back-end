@@ -4,6 +4,7 @@ import { AppDataSource } from "./../data-source";
 import userRepository from "./User.repository";
 import { UploadedFile } from "express-fileupload";
 import uploadImage from "./../services/s3Client.service";
+import generateQR from './../services/QRcode.service';
 
 const kidRepo = AppDataSource.getRepository(Kid);
 
@@ -12,6 +13,9 @@ const kidRepository = {
     return await kidRepo.find({
       relations: {
         parent: true,
+        booking: {
+          driver: true,
+        },
       },
     });
   },
@@ -25,6 +29,9 @@ const kidRepository = {
     return await kidRepo.findOne({
       relations: {
         parent: true,
+        booking: {
+          driver: true,
+        },
       },
       where: {
         id,
@@ -39,10 +46,11 @@ const kidRepository = {
     gender: Gender,
     image: UploadedFile
   ) => {
-    console.log("image =>", image);
-    const avatar = await uploadImage("kid", image);
-    if (avatar) {
-      const parent = await userRepository.getUserById(parentId);
+    let avatar;
+    if(image) {
+      avatar = await uploadImage("kid", image);
+    }
+    const parent = await userRepository.getUserById(parentId);
       const newKid = kidRepo.create({
         name,
         age,
@@ -50,8 +58,31 @@ const kidRepository = {
         parent,
         avatar,
       });
+      const qr = await generateQR(newKid.id)
+      newKid.qr = qr
       return await kidRepo.save(newKid);
+  },
+
+  updateKid: async (id: string, payload) => {
+    const { name, age, avatar, gender } = payload;
+    const kid = await kidRepo.findOne({
+      where: { id },
+      relations: {
+        parent: true,
+        booking: true,
+      },
+    });
+    if (kid) {
+      const image = await uploadImage("kid", avatar);
+      kid.name = name || kid.name;
+      kid.age = age || kid.age;
+      kid.avatar = image || kid.avatar;
+      kid.booking;
+      kid.parent;
+      kid.gender = gender || kid.gender;
+      return await kidRepo.save(kid);
     }
+    return false;
   },
 
   deleteKid: async (id: string) => {

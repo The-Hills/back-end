@@ -2,6 +2,7 @@ import { AppDataSource } from "../data-source";
 import { User } from "../entities/User.entity";
 import { Gender } from "../utils/Enum";
 import { Account } from "./../entities/Account.entity";
+import uploadImage from "./../services/s3Client.service";
 
 const userRepo = AppDataSource.getRepository(User);
 
@@ -9,7 +10,9 @@ const userRepository = {
   getAllUser: async () => {
     return await userRepo.find({
       relations: {
-        kid: true,
+        kid: {
+          booking: true,
+        },
         account: true,
       },
     });
@@ -18,7 +21,9 @@ const userRepository = {
   getUserById: async (id: string) => {
     const user = await userRepo.findOne({
       relations: {
-        kid: true,
+        kid: {
+          booking: true,
+        },
       },
       where: {
         id,
@@ -27,7 +32,6 @@ const userRepository = {
     if (user === null) {
       return null;
     }
-    console.log("get ID");
     return user;
   },
 
@@ -48,14 +52,20 @@ const userRepository = {
 
   updateUser: async (id: string, data: User) => {
     const { name, avatar, gender } = data;
+    let image;
+    if (avatar) {
+      image = await uploadImage("user", avatar);
+    }
     const user = await userRepo.findOneBy({ id });
     if (user === null) {
       return null;
     }
-    user.gender = gender || user.gender;
-    user.name = name || user.name;
-    user.avatar = avatar || user.avatar;
-    return userRepo.save(user);
+    if (image) {
+      user.gender = gender || user.gender;
+      user.name = name || user.name;
+      user.avatar = image || user.avatar;
+      return userRepo.save(user);
+    }
   },
 
   deleteUser: async (id: string) => {
