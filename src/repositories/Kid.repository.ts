@@ -47,20 +47,24 @@ const kidRepository = {
     image: UploadedFile
   ) => {
     let avatar;
-    if(image) {
+    if (image) {
       avatar = await uploadImage("kid", image);
     }
     const parent = await userRepository.getUserById(parentId);
-      const newKid = kidRepo.create({
-        name,
-        age,
-        gender,
-        parent,
-        avatar,
-      });
-      const qr = await generateQR(newKid.id)
-      newKid.qr = qr
-      return await kidRepo.save(newKid);
+    const newKid = await kidRepo.save(kidRepo.create({
+      name,
+      age,
+      gender,
+      parent,
+      avatar,
+    }));
+
+
+    const qr = await generateQR(newKid.id)
+    console.log('qr =>', qr)
+    newKid.qr = qr
+    await kidRepo.save(newKid)
+    return newKid;
   },
 
   updateKid: async (id: string, payload) => {
