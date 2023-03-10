@@ -233,7 +233,7 @@
           female,
           other
         }
-        image: File
+        avatar: File
       }
       * Response: Object
       * Method: POST

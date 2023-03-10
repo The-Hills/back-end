@@ -33,7 +33,10 @@ export class Kid {
   })
   avatar: string;
 
-  @Column()
+  @Column({
+    type: 'longtext',
+    default: "QR code"
+  })
   qr: string;
 
   @ManyToOne(() => User, (user) => user.kid, {
