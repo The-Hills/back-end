@@ -46,10 +46,8 @@ const driverRepositoty = {
     const { name, phone, gender, avatar, cardId, driverLicense, acc } = payload;
     let image = "";
     if (avatar) {
-      const res = await uploadImage("driver", avatar);
-      if (res) {
-        image = res;
-      }
+      image = await uploadImage("driver", avatar);
+
     }
     if (driverLicense) {
       const license = await uploadImage("driver", driverLicense);
@@ -91,7 +89,7 @@ const driverRepositoty = {
         account: true,
       },
     });
-    let image;
+    let image: string;
     if (avatar) {
       image = await uploadImage("driver", avatar);
     }

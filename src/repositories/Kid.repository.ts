@@ -46,7 +46,7 @@ const kidRepository = {
     gender: Gender,
     image: UploadedFile
   ) => {
-    let avatar;
+    let avatar: string;
     if (image) {
       avatar = await uploadImage("kid", image);
     }
@@ -78,7 +78,10 @@ const kidRepository = {
       },
     });
     if (kid) {
-      const image = await uploadImage("kid", avatar);
+      let image: string;
+      if (avatar) {
+        image = await uploadImage("kid", avatar);
+      }
       kid.name = name || kid.name;
       kid.age = age || kid.age;
       kid.avatar = image || kid.avatar;

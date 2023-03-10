@@ -18,7 +18,7 @@ const kidController = {
 
   store: async (req: Request, res: Response) => {
     const { name, age, gender, parentId } = req.body;
-    const image = req.files.avatar;
+    const image = req.files?.avatar;
     const kid = await kidRepository.createKid(
       parentId,
       name,

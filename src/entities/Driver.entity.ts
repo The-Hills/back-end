@@ -37,7 +37,7 @@ export class Driver {
   status: DriverStatus;
 
   @Column({
-    default: "avatar.png",
+    default: "https://the-hills.s3.ap-northeast-1.amazonaws.com/user/avatar.png",
   })
   avatar: string;
 

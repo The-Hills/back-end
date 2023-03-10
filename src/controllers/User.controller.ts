@@ -25,6 +25,7 @@ const userController = {
   update: async (req: Request, res: Response) => {
     const userId = req.params.id;
     const userData = req.body;
+    userData.avatar = req.files?.avatar;
     const user = await userRepository.updateUser(userId, userData);
     if (user) {
       res.status(200).json({

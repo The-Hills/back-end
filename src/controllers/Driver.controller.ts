@@ -24,11 +24,10 @@ const driverController = {
     }
   },
 
-  store: async (req: Request, res: Response) => {},
-
   update: async (req: Request, res: Response) => {
     const driverId = req.params.id;
     const payload: IDriver = req.body;
+    payload.avatar = req.files?.avatar
 
     const driver = await driverRepositoty.updateDriver(driverId, payload);
 

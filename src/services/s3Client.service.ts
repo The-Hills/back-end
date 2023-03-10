@@ -33,10 +33,7 @@ const uploadImage = async (folder: string, file: UploadedFile) => {
   };
 
   const uploadImage = await s3.upload(params).promise();
-  if (uploadImage.Location) {
-    return uploadImage.Location;
-  }
-  return false;
+  return uploadImage.Location;
 };
 
 export const generateQR = async (id: string) => {
@@ -54,11 +51,7 @@ export const generateQR = async (id: string) => {
     Key: `QR/${fileName}`,
   };
   const uploadImage = await s3.upload(params).promise();
-  if (uploadImage.Location) {
-    console.log(uploadImage.Location)
-    return uploadImage.Location;
-  }
-  return false;
+  return uploadImage.Location;
 }
 
 export default uploadImage;
