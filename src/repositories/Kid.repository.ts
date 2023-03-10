@@ -3,8 +3,8 @@ import { Gender } from "../utils/Enum";
 import { AppDataSource } from "./../data-source";
 import userRepository from "./User.repository";
 import { UploadedFile } from "express-fileupload";
-import uploadImage from "./../services/s3Client.service";
-import generateQR from './../services/QRcode.service';
+import uploadImage, { generateQR } from "./../services/s3Client.service";
+
 
 const kidRepo = AppDataSource.getRepository(Kid);
 
@@ -61,7 +61,9 @@ const kidRepository = {
 
 
     const qr = await generateQR(newKid.id)
-    newKid.qr = qr
+    if (qr) {
+      newKid.qr = qr
+    }
     await kidRepo.save(newKid)
     return newKid;
   },
