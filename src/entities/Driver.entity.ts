@@ -41,13 +41,6 @@ export class Driver {
   })
   avatar: string;
 
-  @Column({
-    type: 'int',
-    default: 0,
-    nullable: true,
-  })
-  rating: number;
-
   @Column()
   cardId: number;
 
