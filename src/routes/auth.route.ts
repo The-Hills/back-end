@@ -5,7 +5,7 @@ import authValidator from "./../validator/authValidator";
 const authRouter = Router();
 
 authRouter.get("/", authController.allAccount);
-authRouter.post("/login", authValidator.validatorLogin(), authController.login);
+authRouter.post("/login", authValidator.validatorLoginUser(), authController.login);
 authRouter.post(
   "/register",
   authValidator.validateRegisterUser(),
