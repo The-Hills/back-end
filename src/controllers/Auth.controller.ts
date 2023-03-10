@@ -61,8 +61,13 @@ const authController = {
       return res.status(400).json({ errors: errors.array() });
     }
     const data: IDriver = req.body;
+
+    const driverLicense = req?.files?.driverLicense;
+    if (!driverLicense) {
+      return res.status(500).json({ message: "driver license is required! " });
+    }
+    data.driverLicense = driverLicense
     data.avatar = req?.files?.avatar;
-    data.driverLicense = req?.files?.driverLicense;
     data.role = AccountType.driver;
     const acc = await authService.driverRegister(data);
     if (!acc) {
