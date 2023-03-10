@@ -34,7 +34,7 @@ export class Kid {
   avatar: string;
 
   @Column({
-    type: 'varchar',
+    type: 'longtext',
     default: "QR code"
   })
   qr: string;
