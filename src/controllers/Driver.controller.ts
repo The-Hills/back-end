@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import driverRepositoty from "../repositories/Driver.repository";
 import { IDriver } from "./../utils/interfaces";
 
@@ -14,46 +14,56 @@ const driverController = {
     }
   },
 
-  show: async (req: Request, res: Response) => {
-    const driverId = req.params.id;
-    const driver = await driverRepositoty.getDriverById(driverId);
-    if (driver) {
-      res.status(200).json({ message: "Successfully", data: driver });
-    } else {
-      res.status(400).json({ message: "ID is not defined" });
+  show: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const driverId = req.params.id;
+      const driver = await driverRepositoty.getDriverById(driverId);
+      if (driver) {
+        return res.status(200).json({ message: "Successfully", data: driver });
+      }
+      next({ status: 404, message: "Not found" })
     }
-  },
-
-  update: async (req: Request, res: Response) => {
-    const driverId = req.params.id;
-    const payload: IDriver = req.body;
-    payload.avatar = req.files?.avatar
-
-    const driver = await driverRepositoty.updateDriver(driverId, payload);
-
-    if (driver) {
-      return res.status(200).json({
-        message: "Successfully",
-        data: driver,
-      });
+    catch (err) {
+      next({ status: 400, message: err })
     }
 
-    return res.status(400).json({
-      message: "Id is not defined",
-    });
   },
 
-  destroy: async (req: Request, res: Response) => {
-    const driverId = req.params.id;
-    const user = await driverRepositoty.deleteDriver(driverId);
-    if (user) {
-      res.status(200).json({
-        message: "Successfully",
-      });
-    } else {
-      res.status(400).json({
-        message: "Id is not defined",
-      });
+  update: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const driverId = req.params.id;
+      const payload: IDriver = req.body;
+      payload.avatar = req.files?.avatar
+
+      const driver = await driverRepositoty.updateDriver(driverId, payload);
+
+      if (driver) {
+        return res.status(200).json({
+          message: "Successfully",
+          data: driver,
+        });
+      }
+
+      next({ status: 404, message: "Not found" })
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+
+  },
+
+  destroy: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const driverId = req.params.id;
+      const user = await driverRepositoty.deleteDriver(driverId);
+      if (user) {
+        return res.status(200).json({
+          message: "Successfully",
+        });
+      }
+      next({ status: 404, message: "Not found" })
+    } catch (err) {
+      next({ status: 400, message: err })
     }
   },
 };

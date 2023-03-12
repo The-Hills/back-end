@@ -25,11 +25,12 @@ const s3 = new AWS.S3({ region: process.env.REGION });
 
 const uploadImage = async (folder: string, file: UploadedFile) => {
   const fileContent = Buffer.from(file?.data as ArrayBuffer);
+  const fileName = `${Date.now()}-${file.name}`;
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.BUCKET,
     Body: fileContent,
-    Key: `${folder}/${file.name}`,
-    ContentType: file.mimetype,
+    Key: `${folder}/${fileName}`,
+    ContentType: file.mime,
   };
 
   const uploadImage = await s3.upload(params).promise();

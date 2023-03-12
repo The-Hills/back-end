@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bookingRepository from "./../repositories/Booking.repository";
 import bookingService from "./../services/booking.service";
 
@@ -12,15 +12,16 @@ const bookingController = {
     }
   },
 
-  store: async (req: Request, res: Response) => {
-    const data = req.body;
+  store: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = req.body;
 
-    const booking = await bookingRepository.createBooking(data);
+      const booking = await bookingRepository.createBooking(data);
 
-    if (booking) {
       res.status(200).json({ massage: "Succesefully", data: booking });
-    } else {
-      res.status(400).json({ message: "", error: "" });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
     }
   },
 
@@ -39,45 +40,53 @@ const bookingController = {
       .json({ massage: "Succesefully", data: "List empty" });
   },
 
-  accpect: async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const data = req.body;
+  accpect: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const data = req.body;
 
-    const booking = await bookingRepository.updateAccpectBooking(id, data);
-    console.log(booking);
+      const booking = await bookingRepository.updateAccpectBooking(id, data);
+      console.log(booking);
 
-    if (booking) {
-      res.status(200).json({ massage: "Succesefully", data: booking });
-    } else {
-      res.status(400).json({ message: "", error: "" });
+      if (booking) {
+        return res.status(200).json({ massage: "Succesefully", data: booking });
+      }
+      next({ status: 404, message: "Not found" })
+    } catch (err) {
+      next({ status: 400, message: err })
     }
+
   },
 
-  completed: async (req: Request, res: Response) => {
-    const { id } = req.params;
+  completed: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
 
-    const booking = await bookingRepository.updateCompletedBooking(id);
-    console.log(booking);
+      const booking = await bookingRepository.updateCompletedBooking(id);
+      console.log(booking);
 
-    if (booking) {
-      res.status(200).json({ massage: "Succesefully", data: booking });
-    } else {
-      res.status(400).json({ message: "", error: "" });
+      if (booking) {
+        return res.status(200).json({ massage: "Succesefully", data: booking });
+      }
+      next({ status: 404, message: "Not found" })
+    } catch (err) {
+      next({ status: 400, message: err })
     }
+
   },
 
-  getPrice: async (req: Request, res: Response) => {
-    const { distance, type } = req.body;
-    const result = await bookingService.caclulatedPrice(distance, type);
-    if (result) {
+  getPrice: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { distance, type } = req.body;
+      const result = await bookingService.caclulatedPrice(distance, type);
       return res.status(200).json({
         message: "Successfully",
         data: result,
       });
+    } catch (err) {
+      next({ status: 400, message: err })
     }
-    return res.status(500).json({
-      message: "Error",
-    });
+
   },
 };
 

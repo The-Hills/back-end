@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as dotenv from "dotenv";
 // import dateFormat from "dateformat";
 import * as QueryString from "qs";
@@ -12,53 +12,56 @@ dotenv.config();
 
 
 // Create URL 
-export const create_Payment_URL = async (req: Request, res: Response) => {
+export const create_Payment_URL = async (req: Request, res: Response, next: NextFunction) => {
 
-  const tmnCode = process.env.VNP_TMNCODE;
-  const secretKey = process.env.VNP_HASHSECRET;
-  let vnpUrl = process.env.VNP_URL;
-  const returnUrl = process.env.VNP_RETURN_URL;
+  try {
+    const tmnCode = process.env.VNP_TMNCODE;
+    const secretKey = process.env.VNP_HASHSECRET;
+    let vnpUrl = process.env.VNP_URL;
+    const returnUrl = process.env.VNP_RETURN_URL;
 
-  const {amount, bankCode, orderInfo, ipAddress} = req.body
+    const { amount, ipAddress } = req.body
 
-   const vnp_CreateDate = getCreateDate(new Date());
+    const vnp_CreateDate = getCreateDate(new Date());
 
-   const currCode = 'VND';
+    const currCode = 'VND';
 
-   const data: PaymentPayload = req.body;
-   data.createDate = vnp_CreateDate;
-   data.paymentInfo = orderInfo;
-   data.amount = amount * 100;
+    const data: PaymentPayload = req.body;
+    data.createDate = vnp_CreateDate;
+    data.paymentInfo = "Pikid Payment";
+    data.amount = amount * 100;
 
-   const payment = await paymentRepository.createPayment(data)
-  
-  let vnp_Params = {};
-  vnp_Params["vnp_Version"] = "2.1.0";
-  vnp_Params["vnp_Command"] = "pay";
-  vnp_Params["vnp_TmnCode"] = tmnCode;
-  // vnp_Params['vnp_Merchant'] = ''
-  vnp_Params["vnp_Locale"] = 'en';
-  vnp_Params["vnp_CurrCode"] = currCode;
-  vnp_Params["vnp_TxnRef"] = payment.id;
-  vnp_Params["vnp_OrderInfo"] = orderInfo;
-  vnp_Params["vnp_Amount"] = amount * 100;
-  vnp_Params["vnp_ReturnUrl"] = returnUrl;
-  vnp_Params["vnp_IpAddr"] = ipAddress;
-  vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
-  if (bankCode !== null && bankCode !== "" && bankCode !== undefined) {
-    vnp_Params["vnp_BankCode"] = bankCode;
+    const payment = await paymentRepository.createPayment(data)
+
+    let vnp_Params = {};
+    vnp_Params["vnp_Version"] = "2.1.0";
+    vnp_Params["vnp_Command"] = "pay";
+    vnp_Params["vnp_TmnCode"] = tmnCode;
+    // vnp_Params['vnp_Merchant'] = ''
+    vnp_Params["vnp_Locale"] = 'en';
+    vnp_Params["vnp_CurrCode"] = currCode;
+    vnp_Params["vnp_TxnRef"] = payment.id;
+    vnp_Params["vnp_OrderInfo"] = "Pikid Payment";
+    vnp_Params["vnp_Amount"] = amount * 100;
+    vnp_Params["vnp_ReturnUrl"] = returnUrl;
+    vnp_Params["vnp_IpAddr"] = ipAddress;
+    vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
+
+
+    vnp_Params = sortObject(vnp_Params);
+
+    const signData = QueryString.stringify(vnp_Params, { encode: false });
+    const crypto = require("crypto");
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+    vnp_Params["vnp_SecureHash"] = signed;
+    vnpUrl += "?" + QueryString.stringify(vnp_Params, { encode: false });
+    res.status(200).json({ url: vnpUrl })
+  }
+  catch (err) {
+    next({ status: 400, message: err })
   }
 
-  vnp_Params = sortObject(vnp_Params);
-
-  const signData = QueryString.stringify(vnp_Params, { encode: false });
-  const crypto = require("crypto");
-  const hmac = crypto.createHmac("sha512", secretKey);
-  const signed = hmac.update( Buffer.from(signData, "utf-8")).digest("hex");
-  vnp_Params["vnp_SecureHash"] = signed;
-  vnpUrl += "?" + QueryString.stringify(vnp_Params, { encode: false });
-
-  res.status(200).json({url: vnpUrl})
 };
 
 // VPN reurn response when user request payment
@@ -79,27 +82,27 @@ export const checkIsSuccessfully = async (req: Request, res: Response) => {
   let signData = querystring.stringify(vnp_Params, { encode: false });
   let crypto = require("crypto");
   let hmac = crypto.createHmac("sha512", secretKey);
-  let signed = hmac.update( Buffer.from(signData, "utf-8")).digest("hex");
+  let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
-  
+
   const payment = await paymentRepository.getPaymentById(orderId)
 
-  let paymentStatus = payment.status ;
-  
+  let paymentStatus = payment.status;
+
   let checkOrderId = false; // Mã đơn hàng "giá trị của vnp_TxnRef" VNPAY phản hồi tồn tại trong CSDL của bạn
   if (orderId === payment.id) {
     checkOrderId = true;
   }
   let checkAmount = false;
-  
-  if(Number(amount) === payment.amount) checkAmount = true;
+
+  if (Number(amount) === payment.amount) checkAmount = true;
 
   // Kiểm tra số tiền "giá trị của vnp_Amout/100" trùng khớp với số tiền của đơn hàng trong CSDL của bạn
   if (secureHash === signed) {
     //kiểm tra checksum
     if (checkOrderId) {
       if (checkAmount) {
-        if (paymentStatus === 'DOING' ) {
+        if (paymentStatus === 'DOING') {
           //kiểm tra tình trạng giao dịch trước khi cập nhật tình trạng thanh toán
           if (rspCode == "00") {
             //thanh cong
@@ -108,7 +111,7 @@ export const checkIsSuccessfully = async (req: Request, res: Response) => {
             res.status(200).json({ RspCode: "00", Message: "Success", vnp_Params });
           } else {
             //that bai
-             paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.FAIL)
+            paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.FAIL)
             // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
             res.status(200).json({ RspCode: "00", Message: "Success" });
           }
@@ -151,10 +154,10 @@ export const VNPayReturnURL = (req: Request, res: Response) => {
 
   if (secureHash === signed) {
     //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-    
-    res.redirect('https://www.facebook.com/')   
+
+    res.redirect('https://www.facebook.com/')
   } else {
-    res.status(500).json({message: "Fail", code: "97" });
+    res.status(500).json({ message: "Fail", code: "97" });
   }
 };
 

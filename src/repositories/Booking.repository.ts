@@ -56,7 +56,6 @@ const bookingRepository = {
     const kid = await kidRepository.getKidById(kidId);
 
     const vehicle = await vehicleTypeRepository.getVehicleByName(typeVehicle);
-    console.log(vehicle);
 
     const booking = new Booking();
 

@@ -49,18 +49,16 @@ const driverRepositoty = {
       image = await uploadImage("driver", avatar);
     }
     const license = await uploadImage("driver", driverLicense);
-    if (license) {
-      const newDriver = driverRepo.create({
-        name,
-        phone,
-        gender,
-        avatar: image,
-        cardId,
-        driverLicense: license,
-        account: acc,
-      });
-      return await driverRepo.save(newDriver);
-    }
+    const newDriver = driverRepo.create({
+      name,
+      phone,
+      gender,
+      avatar: image,
+      cardId,
+      driverLicense: license,
+      account: acc,
+    });
+    return await driverRepo.save(newDriver);
   },
 
   updateDriver: async (id: string, payload: IDriver) => {
