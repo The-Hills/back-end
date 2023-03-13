@@ -24,6 +24,7 @@ const s3Client = new S3Client({
 const s3 = new AWS.S3({ region: process.env.REGION });
 
 const uploadImage = async (folder: string, file: UploadedFile) => {
+  console.log('file =>', file)
   const fileContent = Buffer.from(file?.data as ArrayBuffer);
   const fileName = `${Date.now()}-${file.name}`;
   const params: AWS.S3.PutObjectRequest = {
