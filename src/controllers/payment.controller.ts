@@ -58,7 +58,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + QueryString.stringify(vnp_Params, { encode: false });
-    res.status(200).json({ url: vnpUrl })
+    res.status(200).json({ id: payment.id, url: vnpUrl })
   }
   catch (err) {
     next({ status: 400, message: err })

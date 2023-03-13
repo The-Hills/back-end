@@ -21,6 +21,7 @@ const bookingRepository = {
       },
     });
 
+
     return listBooking;
   },
 
@@ -115,6 +116,33 @@ const bookingRepository = {
     await driverRepositoty.updateStatus(booking.driver.id, DriverStatus.active);
     return await bookingRepo.save(booking);
   },
+
+  statistical: async () => {
+    const booking = await bookingRepo.find();
+
+    const total = booking?.reduce((value, currentValue) => {
+      return value + currentValue.fee
+    }, 0)
+    return total
+  },
+
+  statisticalByDate: async (date: Date) => {
+    const booking = await bookingRepo.createQueryBuilder("booking").where("Date(booking.startTime) = :date", { date }).getMany();
+
+    const total = booking?.reduce((value, currentValue) => {
+      return value + currentValue.fee
+    }, 0)
+    return total
+  },
+
+
+  statisticalByMonth: async (month: string) => {
+    const booking = await bookingRepo.createQueryBuilder("booking").where("Month(booking.startTime) = :month", { month }).getMany();
+    const total = booking?.reduce((value, currentValue) => {
+      return value + currentValue.fee
+    }, 0)
+    return total
+  }
 };
 
 export default bookingRepository;

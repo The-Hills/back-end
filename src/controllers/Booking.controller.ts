@@ -88,6 +88,51 @@ const bookingController = {
     }
 
   },
+
+  statistical: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const result = await bookingRepository.statistical()
+      return res.status(200).json({
+        message: "Successfully",
+        data: result,
+      });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  },
+
+  statisticalByDate: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { date } = req.query
+
+      const result = await bookingRepository.statisticalByDate(date)
+      return res.status(200).json({
+        message: "Successfully",
+        data: result,
+      });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  },
+
+  statisticalByMonth: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { month } = req.query
+
+      const result = await bookingRepository.statisticalByMonth(month)
+      return res.status(200).json({
+        message: "Successfully",
+        data: result,
+      });
+    }
+
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  }
 };
 
 export default bookingController;
