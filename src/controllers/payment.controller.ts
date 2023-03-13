@@ -6,6 +6,8 @@ import { getCreateDate } from './../utils/helper';
 import paymentRepository from './../repositories/Payment.repository';
 import { PaymentPayload } from "../utils/interfaces";
 import { PaymentStatus } from "../utils/Enum";
+import * as crypto from 'crypto'
+
 
 dotenv.config();
 
@@ -79,9 +81,7 @@ export const checkIsSuccessfully = async (req: Request, res: Response, next: Nex
 
     vnp_Params = sortObject(vnp_Params);
     let secretKey = process.env.VNP_HASHSECRET;
-    let querystring = require("qs");
-    let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");
+    let signData = QueryString.stringify(vnp_Params, { encode: false });
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
@@ -94,6 +94,8 @@ export const checkIsSuccessfully = async (req: Request, res: Response, next: Nex
       checkOrderId = true;
     }
     let checkAmount = false;
+
+    console.log('rspCode =>', rspCode)
 
     if (Number(amount) === payment.amount) checkAmount = true;
 
@@ -153,22 +155,21 @@ export const VNPayReturnURL = (req: Request, res: Response, next: NextFunction) 
 
     const secretKey = process.env.VNP_HASHSECRET;
 
-    const querystring = require("qs");
-    const signData = querystring.stringify(vnp_Params, { encode: false });
-    const crypto = require("crypto");
+    const signData = QueryString.stringify(vnp_Params, { encode: false });
     const hmac = crypto.createHmac("sha512", secretKey);
     const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
     if (secureHash === signed) {
       //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+      res.status(200).json({ message: "Successfully" })
 
-      res.redirect('https://www.facebook.com/')
+      // res.redirect('https://www.facebook.com/')
     } else {
-      next({ status: 500, message: "Fail", code: "97" })
+      next({ status: 400, message: "Fail", code: "97" })
     }
   }
   catch (err) {
-    next({ status: 400, message: err })
+    next({ status: 500, message: err })
   }
 };
 
