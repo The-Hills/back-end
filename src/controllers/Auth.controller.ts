@@ -151,6 +151,15 @@ const authController = {
       next({ status: 400, message: err })
     }
   },
+
+  demo: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log(req?.files)
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  }
 };
 
 export default authController;
