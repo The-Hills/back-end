@@ -58,7 +58,7 @@ const vehicleController = {
 
   listVehicleType: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const vehicleTypeList = vehicleTypeRepository.getAllVehicleType()
+      const vehicleTypeList = await vehicleTypeRepository.getAllVehicleType();
       return res.status(200).json({
         message: "Successfully",
         data: vehicleTypeList,
