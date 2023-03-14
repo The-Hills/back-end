@@ -5,7 +5,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export const getUserFromToken = async (token) => {
-  console.log(token);
   const decode = await jwt.verify(token, process.env.TOKEN_SECRET);
   return decode;
 };

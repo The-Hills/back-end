@@ -101,6 +101,10 @@ const kidRepository = {
       return await kidRepo.delete({ id });
     }
   },
+
+  getTotalKid: async () => {
+    return await kidRepo.count()
+  }
 };
 
 export default kidRepository;

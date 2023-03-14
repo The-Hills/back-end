@@ -92,10 +92,15 @@ const bookingController = {
   statistical: async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-      const result = await bookingRepository.statistical()
+      const { total, count, data } = await bookingRepository.statistical()
       return res.status(200).json({
         message: "Successfully",
-        data: result,
+        data: {
+          total,
+          count,
+          data,
+
+        },
       });
     }
     catch (err) {
@@ -107,10 +112,12 @@ const bookingController = {
     try {
       const { date } = req.query
 
-      const result = await bookingRepository.statisticalByDate(date)
+      const { booking, countBooking, total } = await bookingRepository.statisticalByDate(date)
       return res.status(200).json({
         message: "Successfully",
-        data: result,
+        data: {
+          booking, countBooking, total
+        },
       });
     }
     catch (err) {

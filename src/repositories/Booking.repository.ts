@@ -5,6 +5,7 @@ import kidRepository from "./Kid.repository";
 import driverRepositoty from "./Driver.repository";
 import { BookingStatus, DriverStatus } from "../utils/Enum";
 import vehicleTypeRepository from "./VehicleType.repository";
+import userRepository from './User.repository';
 
 const bookingRepo = AppDataSource.getRepository(Booking);
 
@@ -118,21 +119,63 @@ const bookingRepository = {
   },
 
   statistical: async () => {
-    const booking = await bookingRepo.find();
+    const bookingList = await bookingRepo.find();
 
-    const total = booking?.reduce((value, currentValue) => {
+    const data = []
+
+    const total = bookingList?.reduce((value, currentValue) => {
       return value + currentValue.fee
     }, 0)
-    return total
+
+    const userCount = await userRepository.getTotalUser()
+
+    const driverCount = await driverRepositoty.getTotalDriver()
+
+    const kidCount = await kidRepository.getTotalKid()
+
+    const bookingCount = bookingList.length
+
+    const count = {
+      user: userCount,
+      driver: driverCount,
+      kid: kidCount,
+      booking: bookingCount
+    }
+    bookingList?.reduce((result, bookingList) => {
+      const { startTime } = bookingList
+      const monthIndex = startTime.getMonth();
+      if (!result[monthIndex]) {
+        result[monthIndex] = { month: monthIndex, totalFee: 0, count: 0 };
+      }
+      result[monthIndex].count += 1;
+      result[monthIndex].totalFee += (bookingList.fee);
+      return result;
+    }, [])?.map((data) => {
+      const monthName = new Date(2023, data.month).toLocaleDateString('default', { month: '2-digit', day: '2-digit', year: 'numeric' });
+      return {
+        name: monthName,
+        count: data.count,
+        data: data.totalFee,
+      };
+    })?.filter((item => item !== null && item !== undefined)).map(item => {
+
+      data.push(item.count)
+
+    });
+    return { total, count, data }
   },
 
+
   statisticalByDate: async (date: Date) => {
-    const booking = await bookingRepo.createQueryBuilder("booking").where("Date(booking.startTime) = :date", { date }).getMany();
+    // const booking = await bookingRepo.createQueryBuilder("booking").where("Date(booking.startTime) = :date", { date }).getMany();
+
+    const booking = await bookingRepo.find()
+    const countBooking = booking.length;
 
     const total = booking?.reduce((value, currentValue) => {
       return value + currentValue.fee
     }, 0)
-    return total
+    return { booking, countBooking, total }
   },
 
 

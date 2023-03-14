@@ -140,6 +140,10 @@ const driverRepositoty = {
     }
     return driverRepo.save(driver);
   },
+
+  getTotalDriver: async () => {
+    return await driverRepo.count()
+  }
 };
 
 export default driverRepositoty;
