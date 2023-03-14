@@ -1,18 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { PayloadVehicle } from "../utils/interfaces";
 import vehicleRepository from "./../repositories/Vehicle.repository";
+import vehicleTypeRepository from './../repositories/VehicleType.repository';
 
 const vehicleController = {
   index: async (req: Request, res: Response,) => {
-    const listVehicleType = await vehicleRepository.getAllVehicle();
-    if (listVehicleType === null) {
+    const listVehicle = await vehicleRepository.getAllVehicle();
+    if (listVehicle === null) {
       return res.status(500).json({
         message: "Error",
       });
     }
     return res.status(200).json({
       message: "Successfully",
-      data: listVehicleType,
+      data: listVehicle,
     });
   },
 
@@ -54,6 +55,19 @@ const vehicleController = {
       next({ status: 400, message: err })
     }
   },
+
+  listVehicleType: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const vehicleTypeList = vehicleTypeRepository.getAllVehicleType()
+      return res.status(200).json({
+        message: "Successfully",
+        data: vehicleTypeList,
+      });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  }
 
 };
 
