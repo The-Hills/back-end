@@ -46,7 +46,6 @@ const bookingController = {
       const data = req.body;
 
       const booking = await bookingRepository.updateAccpectBooking(id, data);
-      console.log(booking);
 
       if (booking) {
         return res.status(200).json({ massage: "Succesefully", data: booking });
@@ -63,7 +62,6 @@ const bookingController = {
       const { id } = req.params;
 
       const booking = await bookingRepository.updateCompletedBooking(id);
-      console.log(booking);
 
       if (booking) {
         return res.status(200).json({ massage: "Succesefully", data: booking });
@@ -92,14 +90,13 @@ const bookingController = {
   statistical: async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-      const { total, count, data } = await bookingRepository.statistical()
+      const { total, count, result } = await bookingRepository.statistical()
       return res.status(200).json({
         message: "Successfully",
         data: {
           total,
           count,
-          data,
-
+          result,
         },
       });
     }
@@ -127,12 +124,12 @@ const bookingController = {
 
   statisticalByMonth: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { month } = req.query
+      const { month, year } = req.query
 
-      const result = await bookingRepository.statisticalByMonth(month)
+      const { total, countBooking, totalPriceBooking, quantity } = await bookingRepository.statisticalByMonth(month, year)
       return res.status(200).json({
         message: "Successfully",
-        data: result,
+        data: { total, countBooking, totalPriceBooking, quantity },
       });
     }
 
