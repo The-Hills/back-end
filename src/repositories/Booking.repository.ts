@@ -118,10 +118,10 @@ const bookingRepository = {
       status: BookingStatus.onWayPickUp,
     });
     await driverRepositoty.updateStatus(driverId, DriverStatus.onRide);
-    await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'accpect_booking', {
-      message: "Your booking has a driver",
-      driver
-    })
+    // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'accpect_booking', {
+    //   message: "Your booking has a driver",
+    //   driver
+    // })
     return await bookingRepo.save(booking);
   },
 
@@ -160,7 +160,7 @@ const bookingRepository = {
     });
     bookingRepo.merge(booking, { status: BookingStatus.completed });
     await driverRepositoty.updateStatus(booking.driver.id, DriverStatus.active);
-    await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'completed', { message: "Your kid has finished the trip safely" })
+    // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'completed', { message: "Your kid has finished the trip safely" })
     return await bookingRepo.save(booking);
   },
 
@@ -168,7 +168,7 @@ const bookingRepository = {
     const booking = await bookingRepo.findOneBy({ id });
 
     if (booking) {
-      await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'delete', { message: "Your booking over time" })
+      // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'delete', { message: "Your booking over time" })
       return await bookingRepo.delete(booking)
     }
     return false

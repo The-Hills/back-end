@@ -3,6 +3,7 @@ import bookingController from "./../controllers/Booking.controller";
 
 const bookingRouter = Router();
 
+bookingRouter.post("/pickup/:id", bookingController.pickup);
 bookingRouter.post("/acceptbooking/:id", bookingController.accpect);
 bookingRouter.post("/completedbooking/:id", bookingController.completed);
 bookingRouter.get("/getbooking/:type", bookingController.showListBooking);
