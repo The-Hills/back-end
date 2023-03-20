@@ -89,6 +89,7 @@ const driverRepositoty = {
     }
 
     let newStatus: DriverStatus;
+
     if (status === 'active') {
       newStatus = DriverStatus.active
     } else {
@@ -108,8 +109,7 @@ const driverRepositoty = {
       driver.booking = driver.booking;
       driver.vehicle = driver.vehicle;
       driver.account = driver.account;
-      (driver.isVerify = isVerify) || driver.isVerify;
-      console.log(driver.isVerify)
+      driver.isVerify = isVerify === undefined ? driver.isVerify : !driver.isVerify;
       driver.status = newStatus;
       if (!driver.isVerify) {
         driver.status = DriverStatus.unActive;
