@@ -22,7 +22,7 @@ const bookingController = {
       if (booking) {
         return res.status(200).json({ massage: "Succesefully", data: booking })
       }
-
+      next({ status: 404, message: "Not found" })
     }
     catch (err) {
       next({ status: 400, message: err })
@@ -36,7 +36,7 @@ const bookingController = {
       const booking = await bookingRepository.createBooking(data);
 
       res.status(200).json({ massage: "Succesefully", data: booking });
-      next({ status: 404, message: "Not found" })
+
     }
     catch (err) {
       next({ status: 400, message: err })
