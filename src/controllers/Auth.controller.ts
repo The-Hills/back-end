@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import authService from "./../services/auth.service";
 import accountRepository from "./../repositories/Account.repository";
 import { loginPayload, RegisterUserPayload } from "../utils/interfaces";
@@ -7,7 +7,7 @@ import { IDriver } from "./../utils/interfaces";
 import { AccountType } from "../utils/Enum";
 
 const authController = {
-  allAccount: async (req: Request, res: Response) => {
+  allAccount: async (req: Request, res: Response, next: NextFunction) => {
     const listAcc = await accountRepository.getAllAccount();
     if (listAcc.length !== 0) {
       res.status(200).json({ message: "Successfully", data: listAcc });
@@ -16,116 +16,150 @@ const authController = {
     }
   },
 
-  login: async (req: Request, res: Response) => {
+  login: async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const data: loginPayload = req.body;
-    const result = await authService.login(data);
-    if (result === null) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. User not found." });
-    } else if (!result) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. Wrong password." });
-    } else {
-      const { token, id, role } = result;
-      res.status(200).json({
-        message: "Successfully",
-        token,
-        id,
-        role,
-      });
+    try {
+      const data: loginPayload = req.body;
+      const result = await authService.login(data);
+      if (result === null) {
+        res
+          .status(401)
+          .json({ message: "Authentication failed. User not found." });
+      } else if (!result) {
+        res
+          .status(401)
+          .json({ message: "Authentication failed. Wrong password." });
+      } else {
+        const { token, id, role } = result;
+        res.status(200).json({
+          message: "Successfully",
+          token,
+          id,
+          role,
+        });
+      }
     }
+    catch (err) {
+      next({ status: 404, messages: err })
+    }
+
   },
 
-  register: async (req: Request, res: Response) => {
+  register: async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const data: RegisterUserPayload = req.body;
-    const acc = await authService.register(data);
-    if (!acc) {
-      return res.status(500).json({ message: "Email is exits" });
+    try {
+      const data: RegisterUserPayload = req.body;
+      const acc = await authService.register(data);
+      if (!acc) {
+        return next({ status: 400, message: "Email is exits" })
+      }
+      res.status(200).json({ message: "Successfully", data: acc });
     }
-    res.status(200).json({ message: "Successfully", data: acc });
+    catch (err) {
+      next({ status: 400, message: err })
+    }
   },
 
-  driverRigester: async (req: Request, res: Response) => {
+  driverRigester: async (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const data: IDriver = req.body;
-    data.avatar = req?.files?.avatar;
-    data.driverLicense = req?.files?.driverLicense;
-    data.role = AccountType.driver;
-    const acc = await authService.driverRegister(data);
-    if (!acc) {
-      return res.status(500).json({ message: "Email is exits" });
-    }
-    res.status(200).json({ message: "Successfully", data: acc });
-  },
+    try {
+      const data: IDriver = req.body;
 
-  driverLogin: async (req: Request, res: Response) => {
-    const data: loginPayload = req.body;
-    const result = await authService.driverLogin(data);
-    if (result === null) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. User not found." });
-    } else if (!result) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. Wrong password." });
-    } else {
-      const { token, id, role } = result;
-      res.status(200).json({
-        message: "Successfully",
-        token,
-        id,
-        role,
-      });
+      const driverLicense = req?.file;
+      if (!driverLicense) {
+        return res.status(500).json({ message: "driver license is required! " });
+      }
+      data.driverLicense = driverLicense
+      data.avatar = req?.file;
+      data.role = AccountType.driver;
+      const acc = await authService.driverRegister(data);
+      if (!acc) {
+        return next({ status: 400, message: "Email is exits" })
+      }
+      res.status(200).json({ message: "Successfully", data: acc });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
     }
   },
 
-  adminRegister: async (req: Request, res: Response) => {
-    const data = req.body;
-    console.log(data);
-    data.role = AccountType.admin;
-    const acc = await authService.adminRegister(data);
-    if (!acc) {
-      return res.status(500).json({ message: "Email is exits" });
+  driverLogin: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: loginPayload = req.body;
+      const result = await authService.driverLogin(data);
+      if (result === null) {
+        return next({ status: 404, message: "Authentication failed. User not found." })
+      } else if (!result) {
+        return next({ status: 404, message: "Authentication failed. Wrong password." })
+      } else {
+        const { token, id, role } = result;
+        res.status(200).json({
+          message: "Successfully",
+          token,
+          id,
+          role,
+        });
+      }
+    } catch (err) {
+      next({ status: 400, message: err })
     }
-    res.status(200).json({ message: "Successfully", data: acc });
   },
 
-  adminLogin: async (req: Request, res: Response) => {
-    const data: loginPayload = req.body;
-    const result = await authService.adminLogin(data);
-    if (result === null) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. User not found." });
-    } else if (!result) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. Wrong password." });
-    } else {
-      const { token, id, role } = result;
-      console.log(token);
-      res.status(200).json({
-        message: "Successfully",
-        token,
-        id,
-        role,
-      });
+  adminRegister: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = req.body;
+      console.log(data);
+      data.role = AccountType.admin;
+      const acc = await authService.adminRegister(data);
+      if (!acc) {
+        return next({ status: 400, message: "Email is exits" })
+      }
+      res.status(200).json({ message: "Successfully", data: acc });
+    } catch (err) {
+      next({ status: 400, message: err })
+    }
+
+  },
+
+  adminLogin: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: loginPayload = req.body;
+      const result = await authService.adminLogin(data);
+      if (result === null) {
+        return next({ status: 404, message: "Authentication failed. User not found." })
+      } else if (!result) {
+        return next({ status: 404, message: "Authentication failed. Wrong password." })
+      } else {
+        const { token, id, role } = result;
+        res.status(200).json({
+          message: "Successfully",
+          token,
+          id,
+          role,
+        });
+      }
+    } catch (err) {
+      next({ status: 400, message: err })
     }
   },
+
+  demo: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log(req?.files)
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  }
 };
 
 export default authController;

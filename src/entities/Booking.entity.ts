@@ -11,7 +11,6 @@ import { BookingStatus } from "../utils/Enum";
 import { Driver } from "./Driver.entity";
 import { Payment } from "./Payment.entity";
 import { Kid } from "./Kid.entity";
-import { Point } from "../utils/helper";
 import { VehicleType } from "./VehicleType.entity";
 
 @Entity()
@@ -28,7 +27,7 @@ export class Booking {
   @Column({
     type: "enum",
     enum: BookingStatus,
-    default: BookingStatus.onTracking,
+    default: BookingStatus.onWaiting,
   })
   status: BookingStatus;
 
@@ -65,7 +64,7 @@ export class Booking {
   @Column()
   endLocation: string;
 
-  @OneToOne(() => VehicleType, (vehicle) => vehicle.vehicleInfo)
+  @ManyToOne(() => VehicleType, (vehicle) => vehicle.vehicleInfo)
   @JoinColumn()
   vehicleType: VehicleType;
 

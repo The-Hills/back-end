@@ -3,8 +3,8 @@ import { Gender } from "../utils/Enum";
 import { AppDataSource } from "./../data-source";
 import userRepository from "./User.repository";
 import { UploadedFile } from "express-fileupload";
-import uploadImage from "./../services/s3Client.service";
-import generateQR from './../services/QRcode.service';
+import uploadImage, { generateQR } from "./../services/s3Client.service";
+
 
 const kidRepo = AppDataSource.getRepository(Kid);
 
@@ -46,7 +46,7 @@ const kidRepository = {
     gender: Gender,
     image: UploadedFile
   ) => {
-    let avatar;
+    let avatar: string;
     if (image) {
       avatar = await uploadImage("kid", image);
     }
@@ -61,7 +61,9 @@ const kidRepository = {
 
 
     const qr = await generateQR(newKid.id)
-    newKid.qr = qr
+    if (qr) {
+      newKid.qr = qr
+    }
     await kidRepo.save(newKid)
     return newKid;
   },
@@ -76,7 +78,10 @@ const kidRepository = {
       },
     });
     if (kid) {
-      const image = await uploadImage("kid", avatar);
+      let image: string;
+      if (avatar) {
+        image = await uploadImage("kid", avatar);
+      }
       kid.name = name || kid.name;
       kid.age = age || kid.age;
       kid.avatar = image || kid.avatar;
@@ -96,6 +101,10 @@ const kidRepository = {
       return await kidRepo.delete({ id });
     }
   },
+
+  getTotalKid: async () => {
+    return await kidRepo.count()
+  }
 };
 
 export default kidRepository;

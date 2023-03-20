@@ -46,27 +46,19 @@ const driverRepositoty = {
     const { name, phone, gender, avatar, cardId, driverLicense, acc } = payload;
     let image = "";
     if (avatar) {
-      const res = await uploadImage("driver", avatar);
-      if (res) {
-        image = res;
-      }
+      image = await uploadImage("driver", avatar);
     }
-    if (driverLicense) {
-      const license = await uploadImage("driver", driverLicense);
-      if (license) {
-        const newDriver = driverRepo.create({
-          name,
-          phone,
-          gender,
-          avatar: image,
-          cardId,
-          driverLicense: license,
-          account: acc,
-        });
-        return await driverRepo.save(newDriver);
-      }
-    }
-    return false;
+    const license = await uploadImage("driver", driverLicense);
+    const newDriver = driverRepo.create({
+      name,
+      phone,
+      gender,
+      avatar: image,
+      cardId,
+      driverLicense: license,
+      account: acc,
+    });
+    return await driverRepo.save(newDriver);
   },
 
   updateDriver: async (id: string, payload: IDriver) => {
@@ -91,10 +83,18 @@ const driverRepositoty = {
         account: true,
       },
     });
-    let image;
+    let image: string;
     if (avatar) {
       image = await uploadImage("driver", avatar);
     }
+
+    let newStatus: DriverStatus;
+    if (status === 'active') {
+      newStatus = DriverStatus.active
+    } else {
+      newStatus = DriverStatus.unActive
+    }
+
     if (driver) {
       driver.name = name || driver.name;
       driver.avatar = image || driver.avatar;
@@ -109,10 +109,12 @@ const driverRepositoty = {
       driver.vehicle = driver.vehicle;
       driver.account = driver.account;
       (driver.isVerify = isVerify) || driver.isVerify;
-      driver.status = status;
-      if (!isVerify) {
+      console.log(driver.isVerify)
+      driver.status = newStatus;
+      if (!driver.isVerify) {
         driver.status = DriverStatus.unActive;
       }
+
       return await driverRepo.save(driver);
     }
     return null;
@@ -142,6 +144,10 @@ const driverRepositoty = {
     }
     return driverRepo.save(driver);
   },
+
+  getTotalDriver: async () => {
+    return await driverRepo.count()
+  }
 };
 
 export default driverRepositoty;

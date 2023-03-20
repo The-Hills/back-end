@@ -15,7 +15,7 @@ const authValidator = {
     ];
   },
 
-  validatorLogin: () => {
+  validatorLoginUser: () => {
     return [
       check("email").isEmail(),
       check("password").not().isEmpty().trim().escape().isStrongPassword({

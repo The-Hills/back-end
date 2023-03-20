@@ -5,7 +5,7 @@ import authValidator from "./../validator/authValidator";
 const authRouter = Router();
 
 authRouter.get("/", authController.allAccount);
-authRouter.post("/login", authValidator.validatorLogin(), authController.login);
+authRouter.post("/login", authValidator.validatorLoginUser(), authController.login);
 authRouter.post(
   "/register",
   authValidator.validateRegisterUser(),
@@ -17,5 +17,6 @@ authRouter.post("/login/driver", authController.driverLogin);
 
 authRouter.post("/register/admin", authController.adminRegister);
 authRouter.post("/login/admin", authController.adminLogin);
+authRouter.post("/demo", authController.demo);
 
 export default authRouter;

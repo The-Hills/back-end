@@ -16,7 +16,9 @@ export class Driver {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: 'nvarchar'
+  })
   name: string;
 
   @Column({
@@ -37,12 +39,9 @@ export class Driver {
   status: DriverStatus;
 
   @Column({
-    default: "avatar.png",
+    default: "https://the-hills.s3.ap-northeast-1.amazonaws.com/user/avatar.png",
   })
   avatar: string;
-
-  @Column()
-  rating: number;
 
   @Column()
   cardId: number;

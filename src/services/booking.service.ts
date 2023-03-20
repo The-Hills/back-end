@@ -4,7 +4,6 @@ const bookingService = {
     let discount = 0;
 
     const vehicle = await vehicleTypeRepository.getVehicleByName(type);
-    console.log(vehicle);
     if (vehicle === null) {
       return false;
     }
@@ -18,7 +17,6 @@ const bookingService = {
     }
 
     const total = distance * (price - discount);
-    console.log(total);
 
     return total;
   },

@@ -7,50 +7,68 @@ const kidController = {
     res.status(200).json({ message: "Successfully", data: kids });
   },
 
-  show: async (req: Request, res: Response) => {
+  show: async (req: Request, res: Response, next: NextFunction) => {
     const kid = await kidRepository.getKidById(req.params.id);
-    if (kid) {
-      res.json({ massage: "Succesefully", data: kid });
-    } else {
-      res.status(400).json({ message: "Failed", error: "Id is not define" });
+    try {
+      if (kid) {
+        return res.json({ massage: "Succesefully", data: kid });
+      }
+      next({ status: 404, message: "Not found" })
+    }
+    catch (err) {
+      next({ status: 400, message: err })
     }
   },
 
-  store: async (req: Request, res: Response) => {
-    const { name, age, gender, parentId } = req.body;
-    const image = req.files.avatar;
-    const kid = await kidRepository.createKid(
-      parentId,
-      name,
-      age,
-      gender,
-      image
-    );
-    res.json(kid);
-  },
+  store: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, age, gender, parentId } = req.body;
+      const image = req.file;
+      const kid = await kidRepository.createKid(
+        parentId,
+        name,
+        age,
+        gender,
+        image
+      );
 
-  update: async (req: Request, res: Response) => {
-    const kidId = req.params.id;
-    const data = req.body;
-    data.avatar = req.files.avatar;
-    const kid = await kidRepository.updateKid(kidId, data);
-    if (kid) {
-      res
-        .status(200)
-        .json({ message: "Successfully", image: req.files.avatar });
-    } else {
-      res.status(400).json({ message: "Id is not define" });
+      res.status(200).json({ message: "Successfully", kid });
+    }
+    catch (err) {
+      next({ status: 400, message: err })
     }
   },
 
-  destroy: async (req: Request, res: Response) => {
-    const kidId = req.params.id;
-    const kidDeleted = await kidRepository.deleteKid(kidId);
-    if (kidDeleted) {
-      res.status(200).json({ message: "Successfully" });
-    } else {
-      res.status(400).json({ message: "Id is not define" });
+  update: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const kidId = req.params.id;
+      const data = req.body;
+      data.avatar = req.file;
+      const kid = await kidRepository.updateKid(kidId, data);
+      if (kid) {
+        return res
+          .status(200)
+          .json({ message: "Successfully", data: kid });
+      }
+      next({ status: 404, message: "Not found" })
     }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  },
+
+  destroy: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const kidId = req.params.id;
+      const kidDeleted = await kidRepository.deleteKid(kidId);
+      if (kidDeleted) {
+        res.status(200).json({ message: "Successfully" });
+      }
+      next({ status: 404, message: "Not found" })
+    } catch (err) {
+      next({ status: 400, message: err })
+    }
+
   },
 };
 

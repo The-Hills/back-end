@@ -9,3 +9,11 @@ export const getCreateDate = (date: Date) => {
     date.getSeconds(),
   )}`;
 };
+
+export const getDayofMonth = (year: number, month: number): number => {
+  const date = new Date(year, month, 1);
+
+  date.setDate(date.getDate() - 1);
+
+  return date.getDate();
+}

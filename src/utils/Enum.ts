@@ -11,9 +11,10 @@ export enum AccountType {
 }
 
 export enum BookingStatus {
-  onTracking = "onTracking",
+  onWaiting = "onWaiting",
+  onWayPickUp = "onWayPickUp",
   onRide = "onRide",
-  conpleted = "completed",
+  completed = "completed",
 }
 
 export enum DriverStatus {

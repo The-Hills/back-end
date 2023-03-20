@@ -18,6 +18,10 @@ const userRepository = {
     });
   },
 
+  getTotalUser: async () => {
+    return await userRepo.count();
+  },
+
   getUserById: async (id: string) => {
     const user = await userRepo.findOne({
       relations: {
