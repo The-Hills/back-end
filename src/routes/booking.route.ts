@@ -12,6 +12,7 @@ bookingRouter.get("/statisticalbydate", bookingController.statisticalByDate);
 bookingRouter.get("/statisticalbymonth", bookingController.statisticalByMonth);
 bookingRouter.post("/", bookingController.store);
 bookingRouter.delete("/:id", bookingController.destroy);
+bookingRouter.get("/:id", bookingController.show);
 bookingRouter.get("/", bookingController.index);
 
 export default bookingRouter;
