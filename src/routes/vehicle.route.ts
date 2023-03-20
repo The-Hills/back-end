@@ -1,6 +1,7 @@
 import { Router } from "express";
 import vehicleController from "./../controllers/Vehicle.controller";
 
+
 const vehicleRouter = Router();
 
 vehicleRouter.post("/", vehicleController.store);

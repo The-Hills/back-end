@@ -44,7 +44,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     vnp_Params["vnp_CurrCode"] = currCode;
     vnp_Params["vnp_TxnRef"] = payment.id;
     vnp_Params["vnp_OrderInfo"] = "Pikid Payment";
-    vnp_Params["vnp_Amount"] = amount * 100;
+    vnp_Params["vnp_Amount"] = amount;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddress;
     vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
@@ -161,9 +161,9 @@ export const VNPayReturnURL = (req: Request, res: Response, next: NextFunction) 
 
     if (secureHash === signed) {
       //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-      res.status(200).json({ message: "Successfully" })
+      // res.status(200).json({ message: "Successfully" })
 
-      // res.redirect('https://www.facebook.com/')
+      res.redirect('pikid://open.app')
     } else {
       next({ status: 400, message: "Fail", code: "97" })
     }

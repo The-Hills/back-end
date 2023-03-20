@@ -27,7 +27,7 @@ export class Booking {
   @Column({
     type: "enum",
     enum: BookingStatus,
-    default: BookingStatus.onTracking,
+    default: BookingStatus.onWaiting,
   })
   status: BookingStatus;
 

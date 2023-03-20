@@ -23,7 +23,7 @@ const kidController = {
   store: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name, age, gender, parentId } = req.body;
-      const image = req.files?.avatar;
+      const image = req.file;
       const kid = await kidRepository.createKid(
         parentId,
         name,
@@ -43,12 +43,12 @@ const kidController = {
     try {
       const kidId = req.params.id;
       const data = req.body;
-      data.avatar = req.files.avatar;
+      data.avatar = req.file;
       const kid = await kidRepository.updateKid(kidId, data);
       if (kid) {
         return res
           .status(200)
-          .json({ message: "Successfully", image: req.files.avatar });
+          .json({ message: "Successfully", data: kid });
       }
       next({ status: 404, message: "Not found" })
     }

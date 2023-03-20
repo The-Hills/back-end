@@ -1,6 +1,5 @@
 import * as AWS from "aws-sdk";
 import { S3Client } from "@aws-sdk/client-s3";
-import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { UploadedFile } from "express-fileupload";
 import * as dotenv from "dotenv";
 import * as QRCode from "qrcode";

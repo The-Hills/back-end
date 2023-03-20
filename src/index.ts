@@ -7,14 +7,12 @@ import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import rootRouter from "./routes/index";
 import * as fileUpload from "express-fileupload";
-import { morganLogger } from "./Logger";
 
 
 const app = express();
 
 app.use(morgan("combined"));
 
-// app.use(morganLogger);
 
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(

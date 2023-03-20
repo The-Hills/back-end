@@ -12,6 +12,23 @@ const bookingController = {
     }
   },
 
+  show: async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      const { id } = req.params;
+
+      const booking = await bookingRepository.getBookingById(id)
+
+      if (booking) {
+        return res.status(200).json({ massage: "Succesefully", data: booking })
+      }
+
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
+  },
+
   store: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
@@ -19,6 +36,7 @@ const bookingController = {
       const booking = await bookingRepository.createBooking(data);
 
       res.status(200).json({ massage: "Succesefully", data: booking });
+      next({ status: 404, message: "Not found" })
     }
     catch (err) {
       next({ status: 400, message: err })
@@ -54,7 +72,20 @@ const bookingController = {
     } catch (err) {
       next({ status: 400, message: err })
     }
+  },
 
+  pickup: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params
+
+      const booking = await bookingRepository.updatePickUp(id)
+      if (booking) {
+        return res.status(200).json({ massage: "Succesefully", data: booking });
+      }
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
   },
 
   completed: async (req: Request, res: Response, next: NextFunction) => {
@@ -71,6 +102,22 @@ const bookingController = {
       next({ status: 400, message: err })
     }
 
+  },
+
+  destroy: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const booking = await bookingRepository.deleteBooking(id);
+
+      if (booking) {
+        return res.status(200).json({ massage: "Succesefully", data: booking });
+      }
+      next({ status: 404, message: "Not found" })
+    }
+    catch (err) {
+      next({ status: 400, message: err })
+    }
   },
 
   getPrice: async (req: Request, res: Response, next: NextFunction) => {

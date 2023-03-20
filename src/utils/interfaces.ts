@@ -27,10 +27,10 @@ export interface IDriver {
   phone: string;
   gender: Gender;
   status: DriverStatus;
-  avatar: string;
+  avatar: any;
   rating: number;
   cardId: number;
-  driverLicense: string;
+  driverLicense: any;
   vehicle: VehicleInfo;
   booking: Booking;
   currentLocation: ILocation;
@@ -46,7 +46,7 @@ export interface PayloadVehicle {
   vehicleName: string;
   vehicleColor: string;
   licensePlates: string;
-  vehicleImage: string;
+  vehicleImage;
   type: string;
   driverId: string;
 }
@@ -73,9 +73,16 @@ export interface PayloadAdmin {
 }
 
 export interface PaymentPayload {
-  
+
   amount: number,
   createDate: string,
   paymentInfo: string,
   status: PaymentStatus
+}
+
+
+interface ImagePayload {
+  name: string,
+  mimetype: string,
+  size: number
 }

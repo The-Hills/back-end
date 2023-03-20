@@ -31,7 +31,7 @@ const userController = {
     try {
       const userId = req.params.id;
       const userData = req.body;
-      userData.avatar = req.files?.avatar;
+      userData.avatar = req.file;
       const user = await userRepository.updateUser(userId, userData);
       if (user) {
         return res.status(200).json({

@@ -87,12 +87,14 @@ const driverRepositoty = {
     if (avatar) {
       image = await uploadImage("driver", avatar);
     }
-    let newStatus: DriverStatus
+
+    let newStatus: DriverStatus;
     if (status === 'active') {
       newStatus = DriverStatus.active
     } else {
       newStatus = DriverStatus.unActive
     }
+
     if (driver) {
       driver.name = name || driver.name;
       driver.avatar = image || driver.avatar;
@@ -106,11 +108,13 @@ const driverRepositoty = {
       driver.booking = driver.booking;
       driver.vehicle = driver.vehicle;
       driver.account = driver.account;
-      driver.isVerify = isVerify || driver.isVerify;
+      (driver.isVerify = isVerify) || driver.isVerify;
+      console.log(driver.isVerify)
       driver.status = newStatus;
       if (!driver.isVerify) {
         driver.status = DriverStatus.unActive;
       }
+
       return await driverRepo.save(driver);
     }
     return null;

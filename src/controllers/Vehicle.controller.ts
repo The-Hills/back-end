@@ -21,7 +21,7 @@ const vehicleController = {
     try {
       const payload: PayloadVehicle = req.body;
 
-      const image = req.files?.image;
+      const image = req.file;
 
       payload.vehicleImage = image;
 

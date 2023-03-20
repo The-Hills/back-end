@@ -33,7 +33,7 @@ const driverController = {
     try {
       const driverId = req.params.id;
       const payload: IDriver = req.body;
-      payload.avatar = req.files?.avatar
+      payload.avatar = req.file;
 
       const driver = await driverRepositoty.updateDriver(driverId, payload);
 
