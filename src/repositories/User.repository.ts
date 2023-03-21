@@ -45,7 +45,7 @@ const userRepository = {
     gender: Gender,
     acc: Account
   ) => {
-    const newUser = await userRepo.create({
+    const newUser = userRepo.create({
       name,
       gender,
       phone,
@@ -56,39 +56,15 @@ const userRepository = {
 
   updateUser: async (id: string, data: User) => {
     const { name, avatar, gender } = data;
-    let image;
-    if (avatar) {
-      image = await uploadImage("user", avatar);
-    }
     const user = await userRepo.findOneBy({ id });
     if (user === null) {
       return null;
     }
-    if (image) {
-      user.gender = gender || user.gender;
-      user.name = name || user.name;
-      user.avatar = image || user.avatar;
-      return userRepo.save(user);
-    }
+    user.gender = gender || user.gender;
+    user.name = name || user.name;
+    return userRepo.save(user);
   },
 
-  updateSocketId: async (id: string, socketId: string) => {
-    console.log('user id => ', id)
-    // const user = await userRepo.findOne({
-    //   where: {
-    //     id
-    //   },
-    //   relations: {
-    //     kid: true,
-    //     account: true
-    //   }
-    // });
-
-    // if (user) {
-    //   user.socketId = socketId
-    //   await userRepo.save(user)
-    // }
-  },
 
   deleteUser: async (id: string) => {
     const user = await userRepo.findOneBy({ id });

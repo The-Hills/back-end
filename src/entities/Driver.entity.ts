@@ -39,14 +39,16 @@ export class Driver {
   status: DriverStatus;
 
   @Column({
-    default: "https://the-hills.s3.ap-northeast-1.amazonaws.com/user/avatar.png",
+    default: "https://the-hills.s3.ap-northeast-1.amazonaws.com/driver/avatar.png",
   })
   avatar: string;
 
   @Column()
   cardId: number;
 
-  @Column()
+  @Column({
+    default: 'https://the-hills.s3.ap-northeast-1.amazonaws.com/driver/license.png'
+  })
   driverLicense: string;
 
   @Column({

@@ -44,18 +44,11 @@ const driverRepositoty = {
 
   createDriver: async (payload) => {
     const { name, phone, gender, avatar, cardId, driverLicense, acc } = payload;
-    let image = "";
-    if (avatar) {
-      image = await uploadImage("driver", avatar);
-    }
-    const license = await uploadImage("driver", driverLicense);
     const newDriver = driverRepo.create({
       name,
       phone,
       gender,
-      avatar: image,
       cardId,
-      driverLicense: license,
       account: acc,
     });
     return await driverRepo.save(newDriver);
@@ -83,10 +76,6 @@ const driverRepositoty = {
         account: true,
       },
     });
-    let image: string;
-    if (avatar) {
-      image = await uploadImage("driver", avatar);
-    }
 
     let newStatus: DriverStatus;
 
@@ -98,7 +87,6 @@ const driverRepositoty = {
 
     if (driver) {
       driver.name = name || driver.name;
-      driver.avatar = image || driver.avatar;
       driver.phone = phone || driver.phone;
       driver.gender = gender || driver.gender;
       driver.cardId = cardId || driver.cardId;

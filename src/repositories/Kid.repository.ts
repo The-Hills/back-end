@@ -47,9 +47,6 @@ const kidRepository = {
     image: UploadedFile
   ) => {
     let avatar: string;
-    if (image) {
-      avatar = await uploadImage("kid", image);
-    }
     const parent = await userRepository.getUserById(parentId);
     const newKid = await kidRepo.save(kidRepo.create({
       name,
@@ -58,8 +55,6 @@ const kidRepository = {
       parent,
       avatar,
     }));
-
-
     const qr = await generateQR(newKid.id)
     if (qr) {
       newKid.qr = qr
@@ -78,13 +73,8 @@ const kidRepository = {
       },
     });
     if (kid) {
-      let image: string;
-      if (avatar) {
-        image = await uploadImage("kid", avatar);
-      }
       kid.name = name || kid.name;
       kid.age = age || kid.age;
-      kid.avatar = image || kid.avatar;
       kid.booking;
       kid.parent;
       kid.gender = gender || kid.gender;
