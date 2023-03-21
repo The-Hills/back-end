@@ -43,7 +43,7 @@ const kidController = {
     try {
       const kidId = req.params.id;
       const data = req.body;
-      data.avatar = req.file;
+      // data.avatar = req.file;
       const kid = await kidRepository.updateKid(kidId, data);
       if (kid) {
         return res

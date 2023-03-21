@@ -6,8 +6,12 @@ import * as cors from "cors";
 import { AppDataSource } from "./data-source";
 import errorMiddleware from "./middlewares/errorMiddleware";
 import rootRouter from "./routes/index";
-import * as fileUpload from "express-fileupload";
+import * as http from 'http'
+import { Server } from 'socket.io';
+import SocketService from './services/socketIO.service';
+import * as dotenv from 'dotenv'
 
+dotenv.config()
 
 const app = express();
 
@@ -28,7 +32,19 @@ app.use(
   })
 );
 
-app.use(fileUpload());
+const server = http.createServer(app)
+
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+})
+
+global._io = io;
+
+global._io.on('connection', SocketService.connection)
+
+io.listen(Number(process.env.SOCKET_PORT) || 1234)
 
 const port = 3000;
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { VNPayReturnURL, checkIsSuccessfully, create_Payment_URL } from "../controllers/payment.controller";
 
-const paymetRouter = new Router()
+const paymetRouter = Router()
 
 paymetRouter.get('/vnpay_ipn', checkIsSuccessfully)
 paymetRouter.get('/vnpay_return', VNPayReturnURL)

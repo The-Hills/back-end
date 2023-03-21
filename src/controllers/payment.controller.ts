@@ -44,7 +44,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     vnp_Params["vnp_CurrCode"] = currCode;
     vnp_Params["vnp_TxnRef"] = payment.id;
     vnp_Params["vnp_OrderInfo"] = "Pikid Payment";
-    vnp_Params["vnp_Amount"] = amount;
+    vnp_Params["vnp_Amount"] = amount * 100;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddress;
     vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
@@ -108,7 +108,7 @@ export const checkIsSuccessfully = async (req: Request, res: Response, next: Nex
             //kiểm tra tình trạng giao dịch trước khi cập nhật tình trạng thanh toán
             if (rspCode == "00") {
               //thanh cong
-              paymentRepository.updatePaymentStatus(
+              await paymentRepository.updatePaymentStatus(
                 payment.id,
                 PaymentStatus.SUCCESS
               );
@@ -116,7 +116,7 @@ export const checkIsSuccessfully = async (req: Request, res: Response, next: Nex
               res.status(200).json({ code: "00", message: "Success", vnp_Params });
             } else {
               //that bai
-              paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.FAIL);
+              await paymentRepository.updatePaymentStatus(payment.id, PaymentStatus.FAIL);
               // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
               res.status(200).json({ code: "00", message: "Fail" });
             }
