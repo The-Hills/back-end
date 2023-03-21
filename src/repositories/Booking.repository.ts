@@ -7,7 +7,6 @@ import { BookingStatus, DriverStatus } from "../utils/Enum";
 import vehicleTypeRepository from "./VehicleType.repository";
 import userRepository from './User.repository';
 import { getDayofMonth } from "../utils/helper";
-import pusher from './../services/pusher.service';
 
 const bookingRepo = AppDataSource.getRepository(Booking);
 
@@ -113,15 +112,20 @@ const bookingRepository = {
         },
       },
     });
+
+    const userId = booking?.kid?.parent?.id
+    console.log('userId => ', userId)
+    const socketId = global._mapList.get(userId)
+    console.log('socket id =>', socketId)
     bookingRepo.merge(booking, {
       driver: driver,
       status: BookingStatus.onWayPickUp,
     });
     await driverRepositoty.updateStatus(driverId, DriverStatus.onRide);
-    // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'accpect_booking', {
-    //   message: "Your booking has a driver",
-    //   driver
-    // })
+    global._io.to(socketId).emit('accept_booking', {
+      message: "Your booking has a driver",
+      data: driver
+    })
     return await bookingRepo.save(booking);
   },
 
@@ -140,6 +144,15 @@ const bookingRepository = {
       }
     })
     bookingRepo.merge(booking, { status: BookingStatus.onRide });
+
+    const userId = booking?.kid?.parent?.id
+    console.log('userId => ', userId)
+    const socketId = global._mapList.get(userId)
+    console.log('socket id =>', socketId)
+
+    await global._io.to(socketId).emit('picked_up', {
+      message: "Your kid has picked up"
+    })
 
     return await bookingRepo.save(booking)
   },
@@ -160,7 +173,15 @@ const bookingRepository = {
     });
     bookingRepo.merge(booking, { status: BookingStatus.completed });
     await driverRepositoty.updateStatus(booking.driver.id, DriverStatus.active);
-    // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'completed', { message: "Your kid has finished the trip safely" })
+
+    const userId = booking?.kid?.parent?.id
+    console.log('userId => ', userId)
+    const socketId = global._mapList.get(userId)
+    console.log('socket id =>', socketId)
+
+    await global._io.to(socketId).emit('completed', {
+      message: "Your child has arrived safely"
+    })
     return await bookingRepo.save(booking);
   },
 
@@ -168,7 +189,6 @@ const bookingRepository = {
     const booking = await bookingRepo.findOneBy({ id });
 
     if (booking) {
-      // await pusher.trigger(`pikid_${booking.kid.parent.id}`, 'delete', { message: "Your booking over time" })
       return await bookingRepo.delete(booking)
     }
     return false

@@ -72,6 +72,24 @@ const userRepository = {
     }
   },
 
+  updateSocketId: async (id: string, socketId: string) => {
+    console.log('user id => ', id)
+    // const user = await userRepo.findOne({
+    //   where: {
+    //     id
+    //   },
+    //   relations: {
+    //     kid: true,
+    //     account: true
+    //   }
+    // });
+
+    // if (user) {
+    //   user.socketId = socketId
+    //   await userRepo.save(user)
+    // }
+  },
+
   deleteUser: async (id: string) => {
     const user = await userRepo.findOneBy({ id });
     if (user === null) {
