@@ -31,7 +31,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     const data: PaymentPayload = req.body;
     data.createDate = vnp_CreateDate;
     data.paymentInfo = "Pikid Payment";
-    data.amount = amount * 100;
+    // data.amount = amount;
 
     const payment = await paymentRepository.createPayment(data)
 
@@ -44,7 +44,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     vnp_Params["vnp_CurrCode"] = currCode;
     vnp_Params["vnp_TxnRef"] = payment.id;
     vnp_Params["vnp_OrderInfo"] = "Pikid Payment";
-    vnp_Params["vnp_Amount"] = amount;
+    vnp_Params["vnp_Amount"] = amount * 100;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddress;
     vnp_Params["vnp_CreateDate"] = vnp_CreateDate;
