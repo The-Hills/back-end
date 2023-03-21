@@ -31,7 +31,7 @@ export const create_Payment_URL = async (req: Request, res: Response, next: Next
     const data: PaymentPayload = req.body;
     data.createDate = vnp_CreateDate;
     data.paymentInfo = "Pikid Payment";
-    // data.amount = amount;
+    data.amount = amount * 100;
 
     const payment = await paymentRepository.createPayment(data)
 
