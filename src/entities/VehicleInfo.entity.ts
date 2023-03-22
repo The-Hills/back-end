@@ -23,7 +23,7 @@ export class VehicleInfo {
   licensePlates: string;
 
   @Column({
-    default: ''
+    default: 'https://the-hills.s3.ap-northeast-1.amazonaws.com/vehicle/vehicle.png'
   })
   vehicleImage: string;
 

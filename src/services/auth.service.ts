@@ -7,11 +7,10 @@ import {
 import * as bcrypt from "bcrypt";
 import userRepository from "./../repositories/User.repository";
 import generateAccessToken from "./../middlewares/token";
-import * as jwt from "jsonwebtoken";
 import { IDriver } from "./../utils/interfaces";
 import driverRepositoty from "./../repositories/Driver.repository";
 import adminRepository from "./../repositories/Admin.repository";
-import { DriverStatus } from "../utils/Enum";
+import vehicleRepository from './../repositories/Vehicle.repository';
 
 const authService = {
   login: async (paylod: loginPayload) => {
@@ -61,6 +60,10 @@ const authService = {
       avatar,
       cardId,
       driverLicense,
+      vehicleName,
+      vehicleColor,
+      vehicleLicensePlates,
+      vehicleType,
     } = payload;
 
     const emailIsExits = await accountRepository.exitsEmail(email);
@@ -71,6 +74,15 @@ const authService = {
         hashedPassword,
         role
       );
+
+      const dataVehicle = {
+        vehicleName,
+        vehicleColor,
+        licensePlates: vehicleLicensePlates,
+        type: vehicleType,
+      }
+
+      const vehicle = await vehicleRepository.createVehicle(dataVehicle)
       const data = {
         name,
         phone,
@@ -79,6 +91,7 @@ const authService = {
         cardId,
         driverLicense,
         acc,
+        vehicle
       };
       return await driverRepositoty.createDriver(data);
     }

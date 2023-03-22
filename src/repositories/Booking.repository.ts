@@ -93,6 +93,17 @@ const bookingRepository = {
     booking.payment = payment;
     booking.vehicleType = vehicle;
 
+    const driverList = await driverRepositoty.getDriverActive();
+
+    driverList.map(driver => {
+      const socketId = global._mapList.get(driver.id)
+
+      global._io.to(socketId).emit('new_booking', {
+        message: "Have a new request",
+        data: booking
+      })
+    })
+
     return await bookingRepo.save(booking);
   },
 

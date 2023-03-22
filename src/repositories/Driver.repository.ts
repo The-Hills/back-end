@@ -20,6 +20,14 @@ const driverRepositoty = {
     });
   },
 
+  getDriverActive: async () => {
+    return await driverRepo.find({
+      where: {
+        status: DriverStatus.active
+      }
+    })
+  },
+
   getDriverById: async (id: string) => {
     const driver = await driverRepo.findOne({
       where: {
@@ -43,13 +51,14 @@ const driverRepositoty = {
   },
 
   createDriver: async (payload) => {
-    const { name, phone, gender, avatar, cardId, driverLicense, acc } = payload;
+    const { name, phone, gender, cardId, acc, vehicle } = payload;
     const newDriver = driverRepo.create({
       name,
       phone,
       gender,
       cardId,
       account: acc,
+      vehicle
     });
     return await driverRepo.save(newDriver);
   },
