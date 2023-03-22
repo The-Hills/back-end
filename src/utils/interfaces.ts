@@ -35,6 +35,10 @@ export interface IDriver {
   booking: Booking;
   currentLocation: ILocation;
   isVerify: boolean;
+  vehicleName: string;
+  vehicleColor: string;
+  vehicleLicensePlates: string;
+  vehicleType: string
 }
 
 export interface ILocation {
@@ -46,9 +50,7 @@ export interface PayloadVehicle {
   vehicleName: string;
   vehicleColor: string;
   licensePlates: string;
-  vehicleImage;
   type: string;
-  driverId: string;
 }
 
 export interface PayloadBooking {

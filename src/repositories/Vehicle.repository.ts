@@ -24,24 +24,17 @@ const vehicleRepository = {
       vehicleName,
       vehicleColor,
       licensePlates,
-      vehicleImage,
       type,
-      driverId,
     } = payload;
-    const image = await uploadImage("vehicle", vehicleImage);
-    const driver = await driverRepositoty.getDriverById(driverId);
+
     const vehicleType = await vehicleTypeRepository.getVehicleByName(type);
-    if (image) {
-      const vehicle = await vehicleRepo.create({
-        vehicleName,
-        vehicleColor,
-        licensePlates,
-        vehicleType,
-        vehicleImage: image,
-        driver,
-      });
-      return await vehicleRepo.save(vehicle);
-    }
+    const vehicle = vehicleRepo.create({
+      vehicleName,
+      vehicleColor,
+      licensePlates,
+      vehicleType,
+    });
+    return await vehicleRepo.save(vehicle);
   },
 
   getVehicleById: async (id: string) => {

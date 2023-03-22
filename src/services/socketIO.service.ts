@@ -10,11 +10,18 @@ const SocketService = {
             console.log(socket.id, ' :disconnected');
         });
 
-        socket.on('user-connect', async (userId) => {
+        socket.on('user-connect', (userId) => {
             console.log('User ID:', userId);
             global._mapList.set(userId, socket.id);
             console.log('User socket => ', global._mapList)
         });
+
+        socket.on('user_disconnect', (userId) => {
+            console.log('disconnect')
+            console.log('User ID:', userId);
+            global._mapList.delete(userId);
+            console.log('User socket => ', global._mapList)
+        })
     }
 }
 

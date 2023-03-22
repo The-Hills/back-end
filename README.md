@@ -193,16 +193,22 @@
       * method: POST
 
     c. accpect booking:
-      * End point: BaseURL/booking/accpect/{id}
+      * End point: BaseURL/booking/acceptbooking/{id}
       * params: id
       * Data: {
           driverId
         }
       * response: object
       * method: POST
+
+    d. pickup booking:
+      * End point: BaseURL/booking/pickup/{id}
+      * params: id
+      * response: object
+      * method: POST
     
-    d. completd booking:
-      * End point: BaseURL/booking/completed/{id}
+    e. completd booking:
+      * End point: BaseURL/booking/completedbooking/{id}
       * params: id
       * response: object
       * method: POST
