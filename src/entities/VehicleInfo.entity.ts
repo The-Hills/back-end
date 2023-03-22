@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -30,7 +31,7 @@ export class VehicleInfo {
   @OneToOne(() => Driver, (driver) => driver.vehicle)
   driver: Driver;
 
-  @OneToOne(() => VehicleType)
+  @ManyToOne(() => VehicleType)
   @JoinColumn()
   vehicleType: VehicleType;
 }

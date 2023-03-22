@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -20,6 +21,6 @@ export class VehicleType {
   })
   price: number;
 
-  @OneToOne(() => VehicleInfo, (vehicleInfo) => vehicleInfo.vehicleType)
-  vehicleInfo: VehicleInfo;
+  @ManyToOne(() => VehicleInfo, (vehicleInfo) => vehicleInfo.vehicleType)
+  vehicleInfo: VehicleInfo[];
 }
