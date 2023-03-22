@@ -31,7 +31,6 @@ export class VehicleInfo {
   @OneToOne(() => Driver, (driver) => driver.vehicle)
   driver: Driver;
 
-  @ManyToOne(() => VehicleType)
-  @JoinColumn()
+  @ManyToOne(() => VehicleType, (vehicleType) => vehicleType.vehicleInfo)
   vehicleType: VehicleType;
 }
