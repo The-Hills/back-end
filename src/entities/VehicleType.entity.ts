@@ -1,8 +1,7 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -21,6 +20,6 @@ export class VehicleType {
   })
   price: number;
 
-  @ManyToOne(() => VehicleInfo, (vehicleInfo) => vehicleInfo.vehicleType)
+  @OneToMany(() => VehicleInfo, (vehicleInfo) => vehicleInfo.vehicleType)
   vehicleInfo: VehicleInfo[];
 }
