@@ -134,10 +134,12 @@ const driverRepositoty = {
     return driverRepo.save(driver);
   },
 
-  updateStatus: async (id: string, status: DriverStatus) => {
+  updateStatus: async (id: string, status: DriverStatus, inCome: number = 0) => {
+    console.log('income =>', inCome)
     const driver = await driverRepo.findOneBy({ id });
     if (driver) {
       driver.status = status;
+      driver.inCome += inCome;
     }
     return driverRepo.save(driver);
   },

@@ -64,6 +64,11 @@ export class Booking {
   @Column()
   endLocation: string;
 
+  @Column({
+    default: 0,
+  })
+  inCome: number
+
   @ManyToOne(() => VehicleType, (vehicle) => vehicle.vehicleInfo)
   @JoinColumn()
   vehicleType: VehicleType;

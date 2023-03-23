@@ -21,9 +21,10 @@ const bookingRepository = {
           vehicle: true,
         },
       },
+      order: {
+        startTime: 'DESC'
+      }
     });
-
-
     return listBooking;
   },
 
@@ -92,6 +93,7 @@ const bookingRepository = {
     booking.fee = fee;
     booking.payment = payment;
     booking.vehicleType = vehicle;
+    booking.inCome = ((fee * 75) / 100);
 
     const driverList = await driverRepositoty.getDriverActive();
 
@@ -182,8 +184,10 @@ const bookingRepository = {
         },
       },
     });
+
+    const driverInCome = ((booking.fee * 25) / 100)
     bookingRepo.merge(booking, { status: BookingStatus.completed });
-    await driverRepositoty.updateStatus(booking.driver.id, DriverStatus.active);
+    await driverRepositoty.updateStatus(booking.driver.id, DriverStatus.active, driverInCome);
 
     const userId = booking?.kid?.parent?.id
     console.log('userId => ', userId)

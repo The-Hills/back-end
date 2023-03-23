@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PaymentStatus } from "../utils/Enum";
-import { User } from "./User.entity";
 
 @Entity()
 export class Payment {
@@ -19,7 +18,7 @@ export class Payment {
   @Column({
     type: 'enum',
     enum: PaymentStatus,
-    default: PaymentStatus.DOING
+    default: PaymentStatus.SUCCESS
   })
   status: PaymentStatus
 }

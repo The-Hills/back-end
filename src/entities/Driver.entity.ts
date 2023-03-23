@@ -62,6 +62,11 @@ export class Driver {
   })
   currentLocation: string;
 
+  @Column({
+    default: 0,
+  })
+  inCome: number;
+
   @OneToOne(() => Account, (account) => account.driver, { onDelete: "CASCADE" })
   @JoinColumn()
   account: Account;
